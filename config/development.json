@@ -1,0 +1,9 @@
+{
+  "server": {
+    "maxProcess": 1,
+    "port": 8080
+  },
+  "logger": {
+    "level": "debug"
+  }
+}
