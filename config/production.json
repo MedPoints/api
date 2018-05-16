@@ -5,5 +5,10 @@
   },
   "logger": {
     "level": "debug"
+  },
+  "mongo": {
+    "port": 27017,
+    "host": "localhost",
+    "dbName": "medpoint"
   }
 }
