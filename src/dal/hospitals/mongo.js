@@ -1,11 +1,6 @@
 const collectionName = 'hospitals';
 
 /**
- * @typedef {Object} Doctor -- doctor
- * @property {String} name -- fullname
- */
-
-/**
  * @typedef {Object} Coordinations -- coordination model
  * @property {Number} lat
  * @property {Number} lon
@@ -25,15 +20,15 @@ const collectionName = 'hospitals';
  * @returns {Promise<Hospital>} 
  */
 exports.getHospitalById = async function(id){
-    return hospitalQuery({_id: id});
+    return hospitalQuery.call(this, {_id: id});
 };
 
 /**
  * @param {String} name
- * @return {Promise<Object>}
+ * @return {Promise<Hospital>}
  */
 exports.getHospitalByByName = async function(name){
-    return hospitalQuery({name});
+    return hospitalQuery.call(this, {name});
 };
 
 /**
@@ -63,6 +58,10 @@ exports.deleteHospital = async function(id){
     await collection.remove({_id, id});
 };
 
+/**
+ * @param {Object} filter
+ * @returns {Promise<Hospital>} 
+ */
 async function hospitalQuery(filter){
     const collection = this.mongo.collection(collectionName);
     const hospitals = await collection.find(filter).limit(1).toArray();
