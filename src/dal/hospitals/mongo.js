@@ -1,5 +1,14 @@
 const collectionName = 'hospitals';
 
+
+/**
+ * @typedef {Object} OpeningHours -- opening hours model
+ * @property {String} dayOfWeek -- day of week
+ * @property {Boolean} isClosed -- is closed today
+ * @property {String} open -- time of opening
+ * @property {String} closed -- time of closing
+ */
+
 /**
  * @typedef {Object} Coordinations -- coordination model
  * @property {Number} lat
@@ -10,8 +19,16 @@ const collectionName = 'hospitals';
  * @typedef {Object} Hospital -- hospital model
  * @property {Stirng} _id
  * @property {String} name -- hospital name
+ * @property {String} chain -- chain of hospital
+ * @property {Array<String>} departments -- departments of hospitals
  * @property {String} specialiazion -- hospital specialization
  * @property {Coordinations} coordinations -- hospital coordinations
+ * @property {String} address -- hospital address
+ * @property {Array<String>} photos -- links for photos
+ * @property {Array<OpeningHours>} openingHours
+ * @property {String} email 
+ * @property {String} phone
+ * @property {String} website
  * @property {Array<Doctor>} doctors
  */
 

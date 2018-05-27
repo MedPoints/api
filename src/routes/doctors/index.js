@@ -1,7 +1,12 @@
+const doctors = require('../../lib/doctors/index');
+
 exports.get = async (req, res) => {
     const {id, name} = req.query;
     try{
+        const doctor = await doctors.getDoctor({id});
+        res.send({result: doctor});
     }catch(err){
+        console.log(err);
         res.status(500).send({error: err});
     }
 };

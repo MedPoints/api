@@ -4,5 +4,8 @@
   },
   "hospitals": {
     "mongo": true
+  },
+  "doctors": {
+    "mongo": true
   }
 }
