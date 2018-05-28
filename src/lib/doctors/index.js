@@ -27,13 +27,13 @@ exports.getDoctor = async function({id, name}){
 
 /**
  * @param {Object} doctor
- * @returns {Promise<Void>} 
+ * @returns {Promise}
  */
 exports.saveDoctor = async (doctor) => {
     const hospitalsDal = await dal.open('doctors');
     try{
-        const model = buildDoctorModel(hospital);
-        await hospitalsDal.saveHospital(model);
+        const model = buildDoctorModel(doctor);
+        await hospitalsDal.saveDoctor(model);
     }catch(err){
         log.error('saveHospital error', err);
         throw err;
@@ -43,18 +43,27 @@ exports.saveDoctor = async (doctor) => {
 };
 
 /**
- * @param {Object} doctor 
+ * @param {Object} doctor
+ * @returns {Doctor}
  */
 function buildDoctorModel(doctor){
     const model = {};
-    for(const key in hospital){
+    for(const key in doctor){
         switch(key){
             case '_id':
             case 'id':
-                model._id = hospital[key];
+                model._id = doctor[key];
                 break;
             case 'name':
-                model[key] = history[key];
+            case 'specialization':
+                model[key] = doctor[key];
+                break;
+            case 'ratings':
+	            if(!Array.isArray(doctor[key])){
+		            log.warning({key}, 'wrong schema');
+	            }else{
+		            model[key] = doctor[key];
+	            }
                 break;
             default:
                 break;

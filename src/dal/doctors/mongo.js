@@ -13,7 +13,7 @@ const collectionName = 'doctors';
   * @returns {Promise<Doctor>}
   */
 exports.getDoctorById = async function(id){
-    getDoctorByFilter.call(this, {_id: id});
+    return getDoctorByFilter.call(this, {_id: id});
 };
 
  /**
@@ -21,12 +21,41 @@ exports.getDoctorById = async function(id){
   * @returns {Promise<Doctor>}
   */
 exports.getDoctorByName = async function(name){
-    getDoctorByFilter.call(this, {name});
+	return getDoctorByFilter.call(this, {name});
+};
+
+/**
+ *
+ * @param doctor
+ * @returns {Promise<void>}
+ */
+exports.saveDoctor = async function(doctor){
+	const collection = this.mongo.collection(collectionName);
+	await collection.save(doctor);
+};
+
+
+/**
+ *
+ * @param {String} id
+ * @param {Doctor} doctor
+ */
+exports.updateDoctor = async function(id, doctor){
+	const collection = this.mongo.collection(collectionName);
+	await collection.update({_id: id}, doctor);
+};
+
+/**
+ * @param {String} id
+ */
+exports.deleteDoctor = async function(id){
+	const collection = this.mongo.collection(collectionName);
+	await collection.remove({_id, id});
 };
 
 /**
  * @param {Object} filter
- * @return {Promise<Doctor>} 
+ * @return {Promise<Doctor>}
  */
 async function getDoctorByFilter(filter){
     const collection = this.mongo.collection(collectionName);
