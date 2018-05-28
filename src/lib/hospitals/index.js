@@ -1,6 +1,6 @@
 const dal = require('../../dal/index');
 
-const log = require('../utils/logger').getLogger('HOSPITALS');
+const log = require('../../utils/logger').getLogger('HOSPITALS');
 
 /**
  * 
@@ -10,7 +10,7 @@ const log = require('../utils/logger').getLogger('HOSPITALS');
  */
 exports.getHospital = async ({id, name}) => {
     const hospitalsDal = await dal.open('hospitals');
-    try{
+    try{    
         if(id){
             return hospitalsDal.getHospitalById(id);
         }else if(name){
@@ -91,6 +91,12 @@ function buildHospitalModel(hospital){
                 break;
             case 'name':
             case 'specialization':
+            case 'chain':
+            case 'type':
+            case 'email':
+            case 'phone':
+            case 'website':
+            case 'departments':
                 model[key] = hospital[key];
                 break;
             case 'coordinations':
@@ -104,12 +110,15 @@ function buildHospitalModel(hospital){
                     log.warning({coord}, 'wrong schema of coordination');
                 }
                 break;
+            case 'photos':
+            case 'openingHours':
             case 'doctors':
                 if(!Array.isArray(hospital[key])){
-                    log.warning({coord}, 'wrong schema of doctors');
+                    log.warning({key}, 'wrong schema');
                 }else{
                     model[key] = hospital[key];
                 }
+                break;
                 break;
             default:
                 break;
