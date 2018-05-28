@@ -4,7 +4,7 @@ const collectionName = 'doctors';
  * @typedef {Object} Doctor -- doctor
  * @property {String} name -- fullname
  * @property {String} specialization -- specialization
- * @property {Number} raitings -- raitings of doctor
+ * @property {Number} ratings -- ratings of doctor
  */
 
  
