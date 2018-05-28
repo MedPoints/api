@@ -53,6 +53,19 @@ exports.deleteDoctor = async function(id){
 	await collection.remove({_id, id});
 };
 
+
+/**
+ * @param {String} id
+ * @param {Number} score
+ * @returns {Promise<void>}
+ */
+exports.changeRateOfDoctor = async function(id, score){
+	const collection = this.mongo.collection(collectionName);
+	await collection.update({_id: id}, {
+		$push: {rate: score}
+	});
+};
+
 /**
  * @param {Object} filter
  * @return {Promise<Doctor>}

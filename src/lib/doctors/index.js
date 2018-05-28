@@ -76,6 +76,18 @@ exports.deleteDoctor = async (id) => {
 	}
 };
 
+exports.changeRateOfDoctor = async (id, score) => {
+	const doctorsDal = await dal.open('doctors');
+	try{
+		await doctorsDal.changeRateOfDoctor(id, parseFloat(score));
+	}catch(err){
+		log.error('deleteDoctor error', err);
+		throw err;
+	}finally{
+		doctorsDal.close();
+	}
+};
+
 /**
  * @param {Object} doctor
  * @returns {Doctor}

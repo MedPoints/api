@@ -45,8 +45,9 @@ exports.post = {
     path: '/rating/:id',
     handler: async (req, res) => {
         const id = req.params.id;
-	    const score = req.body.score;
+	    const {score} = req.body;
 	    try{
+	    	await doctors.changeRateOfDoctor(id, score);
 		    res.send({result: 'OK'});
 	    }catch(err){
 		    res.status(500).send({error: err});
