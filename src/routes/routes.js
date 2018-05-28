@@ -44,7 +44,13 @@ exports.init = () => {
 		const moduleMethods = Object.keys(loadedModule);
 		for(const method of moduleMethods){
 			if(ALLOWED_METHODS.indexOf(method) !== -1){
-				router[method](`/${moduleData.name}`, loadedModule[method]);
+				let handler = loadedModule[method];
+				if(typeof handler === 'function'){
+					router[method](`/${moduleData.name}`, handler);
+				}else if(typeof handler === 'object'){
+					const additionalPath = handler.path;
+					router[method](`/${moduleData.name}${additionalPath}`, handler.handler);
+				}
 				continue;
 			}
 			logger.error({method}, 'unknown method');
