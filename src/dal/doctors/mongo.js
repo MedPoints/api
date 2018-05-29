@@ -62,7 +62,7 @@ exports.deleteDoctor = async function(id){
 exports.changeRateOfDoctor = async function(id, score){
 	const collection = this.mongo.collection(collectionName);
 	await collection.update({_id: id}, {
-		$push: {rate: score}
+		$push: {ratings: score}
 	});
 };
 
