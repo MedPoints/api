@@ -10,13 +10,21 @@ const log = require('../../utils/logger').getLogger('DOCTORS');
 exports.getDoctor = async function({id, name}){
     const doctorDAL = await dal.open('doctors');
     try{
+    	let doctor;
         if(id){
-            return doctorDAL.getDoctorById(id);
+            doctor = await doctorDAL.getDoctorById(id);
         }else if(name){
-            return doctorDAL.getDoctorByName(name);
+	        doctor = await doctorDAL.getDoctorByName(name);
         }else{
             throw new Error('EMPTY_PARAMS');
         }
+        if(!doctor){
+        	return {};
+        }
+        doctor.rate = doctor.ratings.reduce((result, r) => result + r, 0);
+        doctor.rate /= doctor.ratings.length;
+        delete doctor.ratings;
+        return doctor;
     }catch(err){
         log.error({id, name}, 'getDoctor error', err);
         throw err;
@@ -30,16 +38,54 @@ exports.getDoctor = async function({id, name}){
  * @returns {Promise}
  */
 exports.saveDoctor = async (doctor) => {
-    const hospitalsDal = await dal.open('doctors');
+    const doctorsDal = await dal.open('doctors');
     try{
         const model = buildDoctorModel(doctor);
-        await hospitalsDal.saveDoctor(model);
+        await doctorsDal.saveDoctor(model);
     }catch(err){
-        log.error('saveHospital error', err);
+        log.error('saveDoctor error', err);
         throw err;
     }finally{
-        hospitalsDal.close()
+        doctorsDal.close()
     }
+};
+
+
+exports.updateDoctor = async (doctor) => {
+	const doctorsDal = await dal.open('doctors');
+	try{
+		const model = buildDoctorModel(doctor);
+		await doctorsDal.updateDoctor(model._id, model);
+	}catch(err){
+		log.error('updateDoctor error', err);
+		throw err;
+	}finally{
+		doctorsDal.close();
+	}
+};
+
+exports.deleteDoctor = async (id) => {
+	const doctorsDal = await dal.open('doctors');
+	try{
+		await doctorsDal.deleteDoctor(id);
+	}catch(err){
+		log.error('deleteDoctor error', err);
+		throw err;
+	}finally{
+		doctorsDal.close();
+	}
+};
+
+exports.changeRateOfDoctor = async (id, score) => {
+	const doctorsDal = await dal.open('doctors');
+	try{
+		await doctorsDal.changeRateOfDoctor(id, parseFloat(score));
+	}catch(err){
+		log.error('deleteDoctor error', err);
+		throw err;
+	}finally{
+		doctorsDal.close();
+	}
 };
 
 /**

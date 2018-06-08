@@ -4,7 +4,7 @@ const collectionName = 'doctors';
  * @typedef {Object} Doctor -- doctor
  * @property {String} name -- fullname
  * @property {String} specialization -- specialization
- * @property {Number} raitings -- raitings of doctor
+ * @property {Number} ratings -- ratings of doctor
  */
 
  
@@ -51,6 +51,19 @@ exports.updateDoctor = async function(id, doctor){
 exports.deleteDoctor = async function(id){
 	const collection = this.mongo.collection(collectionName);
 	await collection.remove({_id, id});
+};
+
+
+/**
+ * @param {String} id
+ * @param {Number} score
+ * @returns {Promise<void>}
+ */
+exports.changeRateOfDoctor = async function(id, score){
+	const collection = this.mongo.collection(collectionName);
+	await collection.update({_id: id}, {
+		$push: {ratings: score}
+	});
 };
 
 /**
