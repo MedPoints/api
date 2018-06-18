@@ -3,20 +3,20 @@ const dal = require('../../dal/index');
 const log = require('../../utils/logger').getLogger('HOSPITALS');
 
 /**
- * 
+ *
  * @param {String} id
  * @param {String} name
- * @returns {Promise<Hospital>} 
+ * @returns {Promise<Hospital>}
  */
 exports.getHospital = async ({id, name}) => {
     const hospitalsDal = await dal.open('hospitals');
-    try{    
+    try{
         if(id){
             return hospitalsDal.getHospitalById(id);
         }else if(name){
             return hospitalsDal.getHospitalByName(name);
         }else{
-            throw new Error('EMPTY_PARAMS');
+            return hospitalsDal.getAllHospitals();
         }
     }catch(err){
         log.error({id, name}, 'getHospital error', err);
@@ -29,7 +29,7 @@ exports.getHospital = async ({id, name}) => {
 
 /**
  * @param {Object} hospital
- * @returns {Promise<Void>} 
+ * @returns {Promise<Void>}
  */
 exports.saveHospital = async (hospital) => {
     const hospitalsDal = await dal.open('hospitals');
@@ -62,7 +62,7 @@ exports.updateHospital = async (hospital) => {
 };
 
 /**
- * @param {String} id 
+ * @param {String} id
  * @returns {Promise<Void>}
  */
 exports.deleteHospital = async (id) => {
