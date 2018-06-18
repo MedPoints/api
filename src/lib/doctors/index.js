@@ -113,11 +113,17 @@ function buildDoctorModel(doctor){
                 break;
         }
     }
+    if(!model['ratings']){
+	    model.ratings = [];
+    }
+    return model;
 }
 
 function composeDoctorData(doctor) {
     doctor.rate = doctor.ratings.reduce((result, r) => result + r, 0);
-    doctor.rate /= doctor.ratings.length;
+    if (doctor.ratings.length > 0) {
+        doctor.rate /= doctor.ratings.length;
+    }
     delete doctor.ratings;
     return doctor;
 }

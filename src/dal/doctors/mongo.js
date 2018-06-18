@@ -17,8 +17,9 @@ exports.getDoctorById = async function(id){
 };
 
 exports.getDoctors = async function(){
-	return getDoctorByFilter.call(this, {});
-}
+	const collection = this.mongo.collection(collectionName);
+	return collection.find({}).toArray();
+};
 
  /**
   * @param {String} name -- doctor full name
@@ -35,7 +36,7 @@ exports.getDoctorByName = async function(name){
  */
 exports.saveDoctor = async function(doctor){
 	const collection = this.mongo.collection(collectionName);
-	await collection.save(doctor);
+	await collection.insert(doctor);
 };
 
 
