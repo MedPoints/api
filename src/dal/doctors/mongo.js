@@ -4,7 +4,7 @@ const collectionName = 'doctors';
  * @typedef {Object} Doctor -- doctor
  * @property {String} name -- fullname
  * @property {String} specialization -- specialization
- * @property {Number} ratings -- ratings of doctor
+ * @property {Array<Number>} ratings -- ratings of doctor
  */
 
  
@@ -15,6 +15,10 @@ const collectionName = 'doctors';
 exports.getDoctorById = async function(id){
     return getDoctorByFilter.call(this, {_id: id});
 };
+
+exports.getDoctors = async function(){
+	return getDoctorByFilter.call(this, {});
+}
 
  /**
   * @param {String} name -- doctor full name
