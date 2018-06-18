@@ -16,15 +16,13 @@ exports.getDoctor = async function({id, name}){
         }else if(name){
 	        doctor = await doctorDAL.getDoctorByName(name);
         }else{
-            throw new Error('EMPTY_PARAMS');
+            const doctors = await doctorDAL.getDoctors();
+            return doctors.map(composeDoctorData);
         }
         if(!doctor){
         	return {};
         }
-        doctor.rate = doctor.ratings.reduce((result, r) => result + r, 0);
-        doctor.rate /= doctor.ratings.length;
-        delete doctor.ratings;
-        return doctor;
+        return composeDoctorData(doctor);
     }catch(err){
         log.error({id, name}, 'getDoctor error', err);
         throw err;
@@ -115,4 +113,11 @@ function buildDoctorModel(doctor){
                 break;
         }
     }
+}
+
+function composeDoctorData(doctor) {
+    doctor.rate = doctor.ratings.reduce((result, r) => result + r, 0);
+    doctor.rate /= doctor.ratings.length;
+    delete doctor.ratings;
+    return doctor;
 }
