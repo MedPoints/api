@@ -1,5 +1,7 @@
 const collectionName = 'doctors';
 
+const ObjectId = require('mongodb').ObjectId;
+
 /**
  * @typedef {Object} Doctor -- doctor
  * @property {String} name -- fullname
@@ -13,7 +15,7 @@ const collectionName = 'doctors';
   * @returns {Promise<Doctor>}
   */
 exports.getDoctorById = async function(id){
-    return getDoctorByFilter.call(this, {_id: id});
+    return getDoctorByFilter.call(this, {_id: ObjectId(id)});
 };
 
 exports.getDoctors = async function(){
@@ -47,7 +49,7 @@ exports.saveDoctor = async function(doctor){
  */
 exports.updateDoctor = async function(id, doctor){
 	const collection = this.mongo.collection(collectionName);
-	await collection.update({_id: id}, doctor);
+	await collection.update({_id: ObjectId(id)}, doctor);
 };
 
 /**
@@ -55,7 +57,7 @@ exports.updateDoctor = async function(id, doctor){
  */
 exports.deleteDoctor = async function(id){
 	const collection = this.mongo.collection(collectionName);
-	await collection.remove({_id, id});
+	await collection.remove({_id: ObjectId(id)});
 };
 
 
@@ -66,7 +68,7 @@ exports.deleteDoctor = async function(id){
  */
 exports.changeRateOfDoctor = async function(id, score){
 	const collection = this.mongo.collection(collectionName);
-	await collection.update({_id: id}, {
+	await collection.update({_id: ObjectId(id)}, {
 		$push: {ratings: score}
 	});
 };
