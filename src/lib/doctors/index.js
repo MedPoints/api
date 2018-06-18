@@ -16,7 +16,7 @@ exports.getDoctor = async function({id, name}){
         }else if(name){
 	        doctor = await doctorDAL.getDoctorByName(name);
         }else{
-            const doctors = await doctorDAL.getDoctors();
+            const doctors = await doctorDAL.getDoctors() || [];
             return doctors.map(composeDoctorData);
         }
         if(!doctor){
