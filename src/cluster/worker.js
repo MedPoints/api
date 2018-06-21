@@ -1,9 +1,7 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-
 const routes = require('../routes/routes');
 const {BaseWorker} = require('./baseworker');
 const DAL = require('../dal/index');
+
 
 class Worker extends BaseWorker{
 	/**
@@ -21,12 +19,8 @@ class Worker extends BaseWorker{
 	 */
 	init(config){
 		DAL.initDAL();
-
-		const app = express();
-		app.use(bodyParser.json());
-		routes.init(app);
-		app.listen(config.port, () => {
-			this._logger.info('start server');
+		routes.initServer({log: this._logger}).listen(config.port, () =>{
+			this._logger.info({port: config.port}, 'start server');
 		});
 	}
 }

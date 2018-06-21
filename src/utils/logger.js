@@ -21,3 +21,16 @@ exports.getLogger = (name) => {
 	loggers[name] = logger;
 	return logger;
 };
+
+
+/**
+ * @param {Logger} log
+ * @return {Function}
+ */
+exports.getMiddlewareLogger = (log) => {
+	return (req, res, next) => {
+		req.log = log.child({className: 'SERVER', path: req.path, queryparams: req.query, method: req.method});
+		req.log.info('INCOMING_REQUEST');
+		next();
+	}
+};

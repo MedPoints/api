@@ -4,57 +4,61 @@ const doctors = require('../lib/doctors/index');
 
 const router = new Router();
 
-router.get('/', async (req, res) => {
+router.get('/', async (req, res, next) => {
 	const {id, name} = req.query;
 	try{
-		const doctor = await doctors.getDoctor({name, id});
-		res.send({result: doctor});
+		res.result = await doctors.getDoctor({name, id});
+	    req.log.info('here');
+		next();
 	}catch(err){
-		res.status(500).send({error: err});
+		next(err);
 	}
 });
 
 
-router.post('/', async (req, res) => {
+router.post('/', async (req, res, next) => {
 	const doctor = req.body;
 	try{
 		await doctors.saveDoctor(doctor);
-		res.send({result: 'OK'});
+		res.result = 'OK';
+		next();
 	}catch(err){
-		res.status(500).send({error: err});
+		next(err);
 	}
 });
 
-router.put('/', async (req, res) => {
+router.put('/', async (req, res, next) => {
 	const doctor = req.body;
 	try{
 		await doctors.updateDoctor(doctor);
-		res.send({result: 'OK'});
+		res.result = 'OK';
+		next();
 	}catch(err){
-		res.status(500).send({error: err});
+		next(err);
 	}
 });
 
-router.delete('/', async (req, res) => {
+router.delete('/', async (req, res, next) => {
 	const {id} = req.query;
 	try{
 		await doctors.deleteDoctor(id);
-		res.send({result: 'OK'});
+		res.result = 'OK';
+		next();
 	}catch(err){
-		res.status(500).send({error: err});
+		next(err);
 	}
 });
 
-router.post('/rating/:id', async (req, res) => {
-	const id = req.params.id;
-	const {score} = req.body;
-	try{
-		await doctors.changeRateOfDoctor(id, score);
-		res.send({result: 'OK'});
-	}catch(err){
-		res.status(500).send({error: err});
-	}
-});
+// router.post('/rating/:id', async (req, res) => {
+// 	const id = req.params.id;
+// 	const {score} = req.body;
+// 	try{
+// 		await doctors.changeRateOfDoctor(id, score);
+// 		res.send({result: 'OK'});
+// 	}catch(err){
+// 		res.status(500).send({error: err});
+// 	}
+// });
 
 
 exports.module = router;
