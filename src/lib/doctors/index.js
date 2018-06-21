@@ -5,24 +5,17 @@ const log = require('../../utils/logger').getLogger('DOCTORS');
 /**
  * @param {String} id
  * @param {String} name
- * @returns {Promise<Doctor>}
+ * @returns {Promise<DoctorResponse|Array<DoctorResponse>|Object>}
  */
 exports.getDoctor = async function({id, name}){
     const doctorDAL = await dal.open('doctors');
     try{
-    	let doctor;
         if(id){
-            doctor = await doctorDAL.getDoctorById(id);
+            return doctorDAL.getDoctorById(id);
         }else if(name){
-	        doctor = await doctorDAL.getDoctorByName(name);
-        }else{
-            const doctors = await doctorDAL.getDoctors() || [];
-            return doctors.map(composeDoctorData);
+	        return doctorDAL.getDoctorByName(name);
         }
-        if(!doctor){
-        	return {};
-        }
-        return composeDoctorData(doctor);
+	    return doctorDAL.getDoctors() || [];
     }catch(err){
         log.error({id, name}, 'getDoctor error', err);
         throw err;
@@ -38,8 +31,7 @@ exports.getDoctor = async function({id, name}){
 exports.saveDoctor = async (doctor) => {
     const doctorsDal = await dal.open('doctors');
     try{
-        const model = buildDoctorModel(doctor);
-        await doctorsDal.saveDoctor(model);
+        await doctorsDal.saveDoctor(doctor);
     }catch(err){
         log.error('saveDoctor error', err);
         throw err;
@@ -52,8 +44,7 @@ exports.saveDoctor = async (doctor) => {
 exports.updateDoctor = async (doctor) => {
 	const doctorsDal = await dal.open('doctors');
 	try{
-		const model = buildDoctorModel(doctor);
-		await doctorsDal.updateDoctor(model._id, model);
+		await doctorsDal.updateDoctor(doctor.id, doctor);
 	}catch(err){
 		log.error('updateDoctor error', err);
 		throw err;
@@ -74,10 +65,10 @@ exports.deleteDoctor = async (id) => {
 	}
 };
 
-exports.changeRateOfDoctor = async (id, score) => {
+exports.changeRateOfDoctor = async (id, rate) => {
 	const doctorsDal = await dal.open('doctors');
 	try{
-		await doctorsDal.changeRateOfDoctor(id, parseFloat(score));
+		await doctorsDal.changeRateOfDoctor(id, rate);
 	}catch(err){
 		log.error('deleteDoctor error', err);
 		throw err;
@@ -85,45 +76,3 @@ exports.changeRateOfDoctor = async (id, score) => {
 		doctorsDal.close();
 	}
 };
-
-/**
- * @param {Object} doctor
- * @returns {Doctor}
- */
-function buildDoctorModel(doctor){
-    const model = {};
-    for(const key in doctor){
-        switch(key){
-            case '_id':
-            case 'id':
-                model._id = doctor[key];
-                break;
-            case 'name':
-            case 'specialization':
-                model[key] = doctor[key];
-                break;
-            case 'ratings':
-	            if(!Array.isArray(doctor[key])){
-		            log.warning({key}, 'wrong schema');
-	            }else{
-		            model[key] = doctor[key];
-	            }
-                break;
-            default:
-                break;
-        }
-    }
-    if(!model['ratings']){
-	    model.ratings = [];
-    }
-    return model;
-}
-
-function composeDoctorData(doctor) {
-    doctor.rate = doctor.ratings.reduce((result, r) => result + r, 0);
-    if (doctor.ratings.length > 0) {
-        doctor.rate /= doctor.ratings.length;
-    }
-    delete doctor.ratings;
-    return doctor;
-}

@@ -49,16 +49,17 @@ router.delete('/', async (req, res, next) => {
 	}
 });
 
-// router.post('/rating/:id', async (req, res) => {
-// 	const id = req.params.id;
-// 	const {score} = req.body;
-// 	try{
-// 		await doctors.changeRateOfDoctor(id, score);
-// 		res.send({result: 'OK'});
-// 	}catch(err){
-// 		res.status(500).send({error: err});
-// 	}
-// });
+router.post('/rating/:id', async (req, res, next) => {
+	const id = req.params.id;
+	const rate = req.body;
+	try{
+		await doctors.changeRateOfDoctor(id, rate);
+		res.result = 'OK';
+		next();
+	}catch(err){
+		next(err);
+	}
+});
 
 
 exports.module = router;
