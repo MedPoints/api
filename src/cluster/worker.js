@@ -24,7 +24,7 @@ class Worker extends BaseWorker{
 
 		const app = express();
 		app.use(bodyParser.json());
-		app.use('/api', routes.init());
+		routes.init(app);
 		app.listen(config.port, () => {
 			this._logger.info('start server');
 		});
