@@ -1,61 +1,40 @@
-const fs = require('fs');
 const path = require('path');
+const express = require('express');
+const bodyParser = require('body-parser');
 
-const Router = require('express').Router;
+const {getMiddlewareLogger} = require('../utils/logger');
 
-const logger = require('../utils/logger').getLogger('ROUTES');
+const routes = [
+	require('./doctors'),
+	require('./hospitals'),
+	require('./drugs')
+];
 
-const MODULE_MAIN_FILE = 'module.json';
-const ALLOWED_METHODS = ['get', 'post', 'put', 'delete'];
+const PREFIX = '/api';
 
-/**
- * @returns {Router}
- */
-exports.init = () => {
-	const dir = path.join(__dirname, '/');
-	const dirData = fs.readdirSync(dir);
-
-	const modules = [];
-	for(const source of dirData){
-		if(fs.lstatSync(path.join(__dirname, source)).isDirectory()){
-			modules.push(source);
-		}
+exports.initServer = ({log}) => {
+	const app = express();
+	app.use(bodyParser.json());
+	app.use(getMiddlewareLogger(log));
+	for(const route of routes){
+		app.use(path.join(PREFIX, route.name), route.module);
+		log.debug({module: route.name}, `module was loaded`);
 	}
-	logger.debug(`founded ${modules.length} modules`);
-	if(modules.length === 0){
-		throw new Error('NO_MODULES_FOUNDED');
-	}
-	const router = Router();
-	for(const module of modules){
-		const moduleFile = path.join(__dirname, module, MODULE_MAIN_FILE);
-		if(!fs.existsSync(moduleFile)){
-			logger.warn({modulePath: moduleFile}, 'module file was not found');
-			continue;
+	app.use((req, res, next) => {
+		if(!res.result){
+			next();
+			return;
 		}
-		let moduleData;
-		try{
-			moduleData = JSON.parse(fs.readFileSync(moduleFile));
-		}catch(err){
-			logger.error(err);
-			continue;
-		}
-		const loadedModule = require(`./${module}/index`);
-		logger.debug({module: moduleData.name}, `start loading module`);
-		const moduleMethods = Object.keys(loadedModule);
-		for(const method of moduleMethods){
-			if(ALLOWED_METHODS.indexOf(method) !== -1){
-				let handler = loadedModule[method];
-				if(typeof handler === 'function'){
-					router[method](`/${moduleData.name}`, handler);
-				}else if(typeof handler === 'object'){
-					const additionalPath = handler.path;
-					router[method](`/${moduleData.name}${additionalPath}`, handler.handler);
-				}
-				continue;
-			}
-			logger.error({method}, 'unknown method');
-		}
-		logger.debug({module: moduleData.name}, `module was loaded`);
-	}
-	return router;
+		res.json({
+			error: null,
+			result: res.result
+		});
+		next();
+	});
+	app.use((err, req, res, next) => {
+		req.log.error(err, 'INTERNAL_ERROR');
+		res.status(500).json({error: err});
+		next();
+	});
+	return app;
 };
