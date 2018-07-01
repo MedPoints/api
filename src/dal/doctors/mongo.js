@@ -81,10 +81,13 @@ async function getDoctorByFilter(filter){
 }
 
 class BaseDoctorModel {
-	constructor({name, specialization, ratings}) {
+	constructor({name, specialization, specializations, statement, education, ratings}) {
 		this.name = name;
 		this.specialization = specialization || '';
+		this.specializations = specializations || [];
+		this.statement = statement || '';
 		this.ratings = ratings || [];
+		this.education = (education || []).map(ed => new Education(ed));
 	}
 }
 
@@ -123,5 +126,13 @@ class CommonRate {
 		this.skills = Math.min(skills || 0);
 		this.attention = Math.min(attention || 0);
 		this.priceQuality = Math.min(priceQuality || 0);
+	}
+}
+
+class Education {
+	constructor({graduated, university, degree}) {
+		this.graduated = graduated || '';
+		this.university = university || '';
+		this.degree = degree || '';
 	}
 }
