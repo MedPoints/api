@@ -78,6 +78,9 @@ exports.getHospitalById = async function(id){
  */
 exports.getHospitalByName = async function(name){
     const result = await hospitalQuery.call(this, {name});
+    if (!result) {
+        return null;
+    }
     return new HospitalResponse(result);
 };
 

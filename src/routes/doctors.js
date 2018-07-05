@@ -8,7 +8,6 @@ router.get('/', async (req, res, next) => {
 	const {id, name} = req.query;
 	try{
 		res.result = await doctors.getDoctor({name, id});
-	    req.log.info('here');
 		next();
 	}catch(err){
 		next(err);
