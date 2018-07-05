@@ -16,7 +16,6 @@ router.get('/', async (req, res, next) => {
 
 
 router.post('/', async (req, res, next) => {
-	const hospital = req.body;
 	try{
 		await hospital.saveHospital(req.body);
 		res.result = 'OK';

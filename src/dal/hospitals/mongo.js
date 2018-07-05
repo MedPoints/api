@@ -33,12 +33,43 @@ const ObjectId = require('mongodb').ObjectId;
  * @property {Array<Doctor>} doctors
  */
 
+class HospitalBaseModel {
+    constructor({name, network, departments, specialiazions, coordinations, email, phone, address, photos, doctors, openingHours}) {
+        this.name = name || '';
+        this.network = network || '';
+        this.specialiazions = specialiazions || '';
+        this.departments = departments || [];
+        this.coordinations = coordinations || {};
+        this.email = email || '';
+        this.phone = phone || '';
+        this.address = address || '';
+        this.photos = photos || [];
+        this.doctors = doctors || [];
+        this.openingHours = openingHours || [];
+    }
+}
+
+class HospitasCreate extends HospitalBaseModel {
+    constructor(entity) {
+        super(entity);
+        this._id = ObjectId(entity.id || entity._id);
+    }
+}
+
+class HospitalResponse extends HospitalBaseModel {
+    constructor(entity) {
+        super(entity);
+        this.id = entity.id || entity._id;
+    }
+}
+
 /**
  * @param {String} id
  * @returns {Promise<Hospital>}
  */
 exports.getHospitalById = async function(id){
-    return hospitalQuery.call(this, {_id: ObjectId(id)});
+    const result = await hospitalQuery.call(this, {_id: ObjectId(id)});
+    return new HospitalResponse(result);
 };
 
 /**
@@ -46,12 +77,14 @@ exports.getHospitalById = async function(id){
  * @return {Promise<Hospital>}
  */
 exports.getHospitalByName = async function(name){
-    return hospitalQuery.call(this, {name});
+    const result = await hospitalQuery.call(this, {name});
+    return new HospitalResponse(result);
 };
 
 exports.getAllHospitals = async function() {
 	const collection = this.mongo.collection(collectionName);
-	return collection.find(filter).toArray();
+    const result = await collection.find({}).toArray();
+    return result.map(r => new HospitalResponse(r));
 };
 
 /**
@@ -59,7 +92,8 @@ exports.getAllHospitals = async function() {
  */
 exports.saveHospital = async function(hospital){
     const collection = this.mongo.collection(collectionName);
-    await collection.insert(hospital);
+    const entity = new HospitasCreate(hospital);
+    await collection.insert(entity);
 };
 
 /**
