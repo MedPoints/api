@@ -1,4 +1,5 @@
 const dal = require('../../dal/index');
+const {ResponseWithMeta} = require('../../routes/responses');
 
 const log = require('../../utils/logger').getLogger('DOCTORS');
 
@@ -17,9 +18,11 @@ exports.getDoctor = async function({id, name, specialization}, paginator){
         }else if(name){
 	        return doctorDAL.getDoctorByName(name);
         }else if(specialization){
-        	return doctorDAL.getDoctorsBySpecialization(specialization, paginator);
+        	const result = await doctorDAL.getDoctorsWithPages({specialization}, paginator) || {};
+        	return new ResponseWithMeta(result)
         }
-	    return doctorDAL.getDoctors(paginator) || [];
+	    const result = await doctorDAL.getDoctorsWithPages({}, paginator) || {};
+	    return new ResponseWithMeta(result)
     }catch(err){
         log.error({id, name}, 'getDoctor error', err);
         throw err;

@@ -1,3 +1,4 @@
+const Promise = require('bluebird');
 const DoctorRate = require("../../models/rates").DoctorRate;
 const {ObjectId} = require('mongodb');
 const {DoctorCreate, DoctorResponse} = require("../../models/doctors");
@@ -12,10 +13,10 @@ exports.getDoctorById = async function(id){
     return getDoctorByFilter.call(this, {_id: ObjectId(id)});
 };
 
-exports.getDoctors = async function(paginator){
+exports.getDoctors = async function(filter, paginator){
 	const collection = this.mongo.collection(collectionName);
 	const offset = paginator.getOffset();
-	const doctors = await collection.find({}).skip(offset).limit(paginator.count).toArray();
+	const doctors = await collection.find(filter).skip(offset).limit(paginator.count).toArray();
 	return doctors.map(d => new DoctorResponse(d));
 };
 
@@ -24,6 +25,19 @@ exports.getDoctorsBySpecialization = async function(specialization, paginator) {
 	const offset = paginator.getOffset();
 	const doctors = await collection.find({specialization}).skip(offset).limit(paginator.count).toArray();
 	return doctors.map(d => new DoctorResponse(d));
+};
+
+exports.getDoctorsWithPages = async function(filter, paginator) {
+	const [doctors, pages] = await Promise.all([
+		exports.getDoctors(filter, paginator),
+		exports.getCount(filter)
+	]);
+	return {
+		data: doctors,
+		meta: {
+			pages: Math.ceil(pages / paginator.count)
+		}
+	}
 };
 
 exports.getCount = async function(filter={}){
