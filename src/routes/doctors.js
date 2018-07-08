@@ -5,7 +5,7 @@ const doctors = require('../lib/doctors/index');
 const router = new Router();
 
 router.get('/', async (req, res, next) => {
-	const {id, name} = req.query;
+	const {id, name, specialization} = req.query;
 	try{
 		res.result = await doctors.getDoctor({name, id});
 		next();

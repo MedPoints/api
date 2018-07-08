@@ -5,15 +5,18 @@ const log = require('../../utils/logger').getLogger('DOCTORS');
 /**
  * @param {String} id
  * @param {String} name
+ * @param {String} specializations
  * @returns {Promise<DoctorResponse|Array<DoctorResponse>|Object>}
  */
-exports.getDoctor = async function({id, name}){
+exports.getDoctor = async function({id, name, specialization}){
     const doctorDAL = await dal.open('doctors');
     try{
         if(id){
             return doctorDAL.getDoctorById(id);
         }else if(name){
 	        return doctorDAL.getDoctorByName(name);
+        }else if(specialization){
+        	return doctorDAL.getDoctorsBySpecialization(specialization);
         }
 	    return doctorDAL.getDoctors() || [];
     }catch(err){

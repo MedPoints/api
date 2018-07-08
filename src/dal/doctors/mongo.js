@@ -1,8 +1,8 @@
+const DoctorRate = require("../../models/rates").DoctorRate;
 const {ObjectId} = require('mongodb');
 const {DoctorCreate, DoctorResponse} = require("../../models/doctors");
 
 const collectionName = 'doctors';
-
 
  /**
   * @param {String} id -- doctor id
@@ -16,6 +16,17 @@ exports.getDoctors = async function(){
 	const collection = this.mongo.collection(collectionName);
 	const doctors = await collection.find({}).toArray();
 	return doctors.map(d => new DoctorResponse(d));
+};
+
+exports.getDoctorsBySpecialization = async function(specialization) {
+	const collection = this.mongo.collection(collectionName);
+	const doctors = await collection.find({specialization}).toArray();
+	return doctors.map(d => new DoctorResponse(d));
+};
+
+exports.getCount = async function(filter={}){
+	const collection = this.mongo.collection(collectionName);
+	return collection.count(filter || {});
 };
 
  /**
@@ -65,7 +76,7 @@ exports.deleteDoctor = async function(id){
  */
 exports.changeRateOfDoctor = async function(id, rate){
 	const collection = this.mongo.collection(collectionName);
-	const entity = new Rate(rate);
+	const entity = new DoctorRate(rate);
 	await collection.update({_id: ObjectId(id)}, {
 		$push: {ratings: entity}
 	});
