@@ -1,6 +1,7 @@
 const collectionName = 'hospitals';
 
 const ObjectId = require('mongodb').ObjectId;
+const {HospitalResponse, HospitalCreate} = require("../../models/hospitals");
 
 /**
  * @typedef {Object} OpeningHours -- opening hours model
@@ -33,39 +34,10 @@ const ObjectId = require('mongodb').ObjectId;
  * @property {Array<Doctor>} doctors
  */
 
-class HospitalBaseModel {
-    constructor({name, network, departments, specialiazions, coordinations, email, phone, address, photos, doctors, openingHours}) {
-        this.name = name || '';
-        this.network = network || '';
-        this.specialiazions = specialiazions || '';
-        this.departments = departments || [];
-        this.coordinations = coordinations || {};
-        this.email = email || '';
-        this.phone = phone || '';
-        this.address = address || '';
-        this.photos = photos || [];
-        this.doctors = doctors || [];
-        this.openingHours = openingHours || [];
-    }
-}
-
-class HospitasCreate extends HospitalBaseModel {
-    constructor(entity) {
-        super(entity);
-        this._id = ObjectId(entity.id || entity._id);
-    }
-}
-
-class HospitalResponse extends HospitalBaseModel {
-    constructor(entity) {
-        super(entity);
-        this.id = entity.id || entity._id;
-    }
-}
 
 /**
  * @param {String} id
- * @returns {Promise<Hospital>}
+ * @returns {Promise<HospitalResponse>}
  */
 exports.getHospitalById = async function(id){
     const result = await hospitalQuery.call(this, {_id: ObjectId(id)});
@@ -74,7 +46,7 @@ exports.getHospitalById = async function(id){
 
 /**
  * @param {String} name
- * @return {Promise<Hospital>}
+ * @return {Promise<HospitalResponse>}
  */
 exports.getHospitalByName = async function(name){
     const result = await hospitalQuery.call(this, {name});
@@ -91,11 +63,11 @@ exports.getAllHospitals = async function() {
 };
 
 /**
- * @param {Hospital} hospital
+ * @param {Object} hospital
  */
 exports.saveHospital = async function(hospital){
     const collection = this.mongo.collection(collectionName);
-    const entity = new HospitasCreate(hospital);
+    const entity = new HospitalCreate(hospital);
     await collection.insert(entity);
 };
 

@@ -1,6 +1,7 @@
-const collectionName = 'doctors';
+const {ObjectId} = require('mongodb');
+const {DoctorCreate, DoctorResponse} = require("../../models/doctors");
 
-const ObjectId = require('mongodb').ObjectId;
+const collectionName = 'doctors';
 
 
  /**
@@ -78,61 +79,4 @@ async function getDoctorByFilter(filter){
     const collection = this.mongo.collection(collectionName);
     const result = await collection.find(filter).limit(1).toArray();
     return new DoctorResponse(result[0]);
-}
-
-class BaseDoctorModel {
-	constructor({name, specialization, specializations, statement, education, ratings}) {
-		this.name = name;
-		this.specialization = specialization || '';
-		this.specializations = specializations || [];
-		this.statement = statement || '';
-		this.ratings = ratings || [];
-		this.education = (education || []).map(ed => new Education(ed));
-	}
-}
-
-class DoctorCreate extends BaseDoctorModel {
-	constructor(entity) {
-		super(entity);
-		this._id = ObjectId(entity._id || entity.id);
-	}
-}
-
-class DoctorResponse extends BaseDoctorModel {
-	constructor(entity) {
-		super(entity);
-		this.id = entity._id || entity.id;
-		this.rate = this.ratings.reduce((result, r) => result + r.rate, 0);
-		if (this.ratings.length > 0) {
-			this.rate /= this.ratings.length;
-			this.rate = Math.floor(this.rate);
-		}
-	}
-}
-
-class Rate {
-	constructor({userId, rate, comment, commonRate}) {
-		this.userId = userId;
-		this.rate = Math.min(rate || 0, 10);
-		this.comment = comment;
-		this.commonRate = new CommonRate(commonRate || {});
-		this.dateCreated = new Date();
-	}
-}
-
-class CommonRate {
-	constructor({knowledge, skills, attention, priceQuality}) {
-		this.knowledge = Math.min(knowledge || 0);
-		this.skills = Math.min(skills || 0);
-		this.attention = Math.min(attention || 0);
-		this.priceQuality = Math.min(priceQuality || 0);
-	}
-}
-
-class Education {
-	constructor({graduated, university, degree}) {
-		this.graduated = graduated || '';
-		this.university = university || '';
-		this.degree = degree || '';
-	}
 }
