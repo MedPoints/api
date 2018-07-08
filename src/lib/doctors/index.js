@@ -6,9 +6,10 @@ const log = require('../../utils/logger').getLogger('DOCTORS');
  * @param {String} id
  * @param {String} name
  * @param {String} specializations
+ * @param {Paginator} paginators
  * @returns {Promise<DoctorResponse|Array<DoctorResponse>|Object>}
  */
-exports.getDoctor = async function({id, name, specialization}){
+exports.getDoctor = async function({id, name, specialization}, paginator){
     const doctorDAL = await dal.open('doctors');
     try{
         if(id){
@@ -16,9 +17,9 @@ exports.getDoctor = async function({id, name, specialization}){
         }else if(name){
 	        return doctorDAL.getDoctorByName(name);
         }else if(specialization){
-        	return doctorDAL.getDoctorsBySpecialization(specialization);
+        	return doctorDAL.getDoctorsBySpecialization(specialization, paginator);
         }
-	    return doctorDAL.getDoctors() || [];
+	    return doctorDAL.getDoctors(paginator) || [];
     }catch(err){
         log.error({id, name}, 'getDoctor error', err);
         throw err;

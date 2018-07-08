@@ -6,8 +6,9 @@ const router = new Router();
 
 router.get('/', async (req, res, next) => {
 	const {id, name, specialization} = req.query;
+	const paginator = req.paginator;
 	try{
-		res.result = await doctors.getDoctor({name, id});
+		res.result = await doctors.getDoctor({name, id, specialization}, paginator);
 		next();
 	}catch(err){
 		next(err);

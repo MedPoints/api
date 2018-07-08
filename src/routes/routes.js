@@ -1,6 +1,7 @@
 const path = require('path');
 const express = require('express');
 const bodyParser = require('body-parser');
+const {createPaginator} = require('./paginator');
 
 const {getMiddlewareLogger} = require('../utils/logger');
 
@@ -16,6 +17,10 @@ exports.initServer = ({log}) => {
 	const app = express();
 	app.use(bodyParser.json());
 	app.use(getMiddlewareLogger(log));
+	app.use((req, res, next) => {
+		req.paginator = createPaginator(req.query);
+		next();
+	});
 	for(const route of routes){
 		app.use(path.join(PREFIX, route.name), route.module);
 		log.debug({module: route.name}, `module was loaded`);

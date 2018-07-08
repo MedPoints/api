@@ -12,15 +12,17 @@ exports.getDoctorById = async function(id){
     return getDoctorByFilter.call(this, {_id: ObjectId(id)});
 };
 
-exports.getDoctors = async function(){
+exports.getDoctors = async function(paginator){
 	const collection = this.mongo.collection(collectionName);
-	const doctors = await collection.find({}).toArray();
+	const offset = paginator.getOffset();
+	const doctors = await collection.find({}).skip(offset).limit(paginator.count).toArray();
 	return doctors.map(d => new DoctorResponse(d));
 };
 
-exports.getDoctorsBySpecialization = async function(specialization) {
+exports.getDoctorsBySpecialization = async function(specialization, paginator) {
 	const collection = this.mongo.collection(collectionName);
-	const doctors = await collection.find({specialization}).toArray();
+	const offset = paginator.getOffset();
+	const doctors = await collection.find({specialization}).skip(offset).limit(paginator.count).toArray();
 	return doctors.map(d => new DoctorResponse(d));
 };
 
