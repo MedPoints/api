@@ -7,7 +7,7 @@ const router = new Router();
 router.get('/', async (req, res, next) => {
 	const {id, name} = req.query;
 	try{
-		res.result = await hospital.getHospital({id, name});
+		res.result = await hospital.getHospital({id, name}, req.paginator);
 		next();
 	}catch(err){
 		next(err);
@@ -16,7 +16,6 @@ router.get('/', async (req, res, next) => {
 
 
 router.post('/', async (req, res, next) => {
-	const hospital = req.body;
 	try{
 		await hospital.saveHospital(req.body);
 		res.result = 'OK';

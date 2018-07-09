@@ -1,21 +1,28 @@
 const dal = require('../../dal/index');
+const {ResponseWithMeta} = require('../../routes/responses');
 
 const log = require('../../utils/logger').getLogger('DOCTORS');
 
 /**
  * @param {String} id
  * @param {String} name
+ * @param {String} specializations
+ * @param {Paginator} paginators
  * @returns {Promise<DoctorResponse|Array<DoctorResponse>|Object>}
  */
-exports.getDoctor = async function({id, name}){
+exports.getDoctor = async function({id, name, specialization}, paginator){
     const doctorDAL = await dal.open('doctors');
     try{
         if(id){
             return doctorDAL.getDoctorById(id);
         }else if(name){
 	        return doctorDAL.getDoctorByName(name);
+        }else if(specialization){
+        	const result = await doctorDAL.getDoctorsWithPages({specialization}, paginator) || {};
+        	return new ResponseWithMeta(result)
         }
-	    return doctorDAL.getDoctors() || [];
+	    const result = await doctorDAL.getDoctorsWithPages({}, paginator) || {};
+	    return new ResponseWithMeta(result)
     }catch(err){
         log.error({id, name}, 'getDoctor error', err);
         throw err;

@@ -1,4 +1,5 @@
 const dal = require('../../dal/index');
+const ResponseWithMeta = require("../../routes/responses").ResponseWithMeta;
 
 const log = require('../../utils/logger').getLogger('HOSPITALS');
 
@@ -6,9 +7,9 @@ const log = require('../../utils/logger').getLogger('HOSPITALS');
  *
  * @param {String} id
  * @param {String} name
- * @returns {Promise<Hospital>}
+ * @returns {Promise<ResponseWithMeta>}
  */
-exports.getHospital = async ({id, name}) => {
+exports.getHospital = async ({id, name}, paginator) => {
     const hospitalsDal = await dal.open('hospitals');
     try{
         if(id){
@@ -16,7 +17,8 @@ exports.getHospital = async ({id, name}) => {
         }else if(name){
             return hospitalsDal.getHospitalByName(name);
         }else{
-            return hospitalsDal.getAllHospitals();
+            const result = await hospitalsDal.getHospitalsWithPages({}, paginator) || {};
+            return new ResponseWithMeta(result);
         }
     }catch(err){
         log.error({id, name}, 'getHospital error', err);

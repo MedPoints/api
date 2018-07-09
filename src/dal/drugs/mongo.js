@@ -24,7 +24,10 @@ exports.saveCategory = async function(category){
 
 exports.getCategoryByFilter = async function(filter){
 	const collection = this.mongo.collection(collectionName);
-	const result = await collection.find(filter).limit(1).toArray();
+	const [result] = await collection.find(filter).limit(1).toArray();
+	if (!result) {
+		return null;
+	}
 	return new DrugCategoryResponse(result[0]);
 };
 

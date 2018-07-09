@@ -1,6 +1,7 @@
 const collectionName = 'hospitals';
 
 const ObjectId = require('mongodb').ObjectId;
+const {HospitalResponse, HospitalCreate} = require("../../models/hospitals");
 
 /**
  * @typedef {Object} OpeningHours -- opening hours model
@@ -33,33 +34,60 @@ const ObjectId = require('mongodb').ObjectId;
  * @property {Array<Doctor>} doctors
  */
 
+
 /**
  * @param {String} id
- * @returns {Promise<Hospital>}
+ * @returns {Promise<HospitalResponse>}
  */
 exports.getHospitalById = async function(id){
-    return hospitalQuery.call(this, {_id: ObjectId(id)});
+    const result = await hospitalQuery.call(this, {_id: ObjectId(id)});
+    return new HospitalResponse(result);
 };
 
 /**
  * @param {String} name
- * @return {Promise<Hospital>}
+ * @return {Promise<HospitalResponse>}
  */
 exports.getHospitalByName = async function(name){
-    return hospitalQuery.call(this, {name});
+    const result = await hospitalQuery.call(this, {name});
+    if (!result) {
+        return null;
+    }
+    return new HospitalResponse(result);
 };
 
-exports.getAllHospitals = async function() {
+exports.getAllHospitals = async function(filter, paginator) {
 	const collection = this.mongo.collection(collectionName);
-	return collection.find(filter).toArray();
+	const offset = paginator.getOffset();
+    const result = await collection.find(filter).skip(offset).limit(paginator.count).toArray();
+    return result.map(r => new HospitalResponse(r));
+};
+
+exports.getHospitalsWithPages = async function(filter, paginator) {
+	const [hospitals, pages] = await Promise.all([
+		exports.getAllHospitals(filter, paginator),
+		exports.getCount(filter)
+	]);
+	return {
+		data: hospitals,
+		meta: {
+			pages: Math.ceil(pages / paginator.count)
+		}
+	}
+};
+
+exports.getCount = async function(filter={}){
+	const collection = this.mongo.collection(collectionName);
+	return collection.count(filter || {});
 };
 
 /**
- * @param {Hospital} hospital
+ * @param {Object} hospital
  */
 exports.saveHospital = async function(hospital){
     const collection = this.mongo.collection(collectionName);
-    await collection.insert(hospital);
+    const entity = new HospitalCreate(hospital);
+    await collection.insert(entity);
 };
 
 /**
