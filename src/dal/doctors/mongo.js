@@ -35,7 +35,8 @@ exports.getDoctorsWithPages = async function(filter, paginator) {
 	return {
 		data: doctors,
 		meta: {
-			pages: Math.ceil(pages / paginator.count)
+			pages: Math.ceil(pages / paginator.count),
+			current: paginator.page,
 		}
 	}
 };

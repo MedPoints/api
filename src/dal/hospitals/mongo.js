@@ -56,10 +56,29 @@ exports.getHospitalByName = async function(name){
     return new HospitalResponse(result);
 };
 
-exports.getAllHospitals = async function() {
+exports.getAllHospitals = async function(filter, paginator) {
 	const collection = this.mongo.collection(collectionName);
-    const result = await collection.find({}).toArray();
+	const offset = paginator.getOffset();
+    const result = await collection.find(filter).skip(offset).limit(paginator.count).toArray();
     return result.map(r => new HospitalResponse(r));
+};
+
+exports.getHospitalsWithPages = async function(filter, paginator) {
+	const [hospitals, pages] = await Promise.all([
+		exports.getAllHospitals(filter, paginator),
+		exports.getCount(filter)
+	]);
+	return {
+		data: hospitals,
+		meta: {
+			pages: Math.ceil(pages / paginator.count)
+		}
+	}
+};
+
+exports.getCount = async function(filter={}){
+	const collection = this.mongo.collection(collectionName);
+	return collection.count(filter || {});
 };
 
 /**
