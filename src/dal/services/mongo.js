@@ -2,7 +2,7 @@ const collectionName = 'services';
 
 const ObjectId = require('mongodb').ObjectId;
 
-const {ServicesCreate, ServicesResponse} = require('../../models/service');
+const {ServiceCreate, ServiceResponse} = require('../../models/service');
 
 exports.getServiceById = async function(id){
 	return ServicesQuery.call(this, {_id: ObjectId(id)});
@@ -17,7 +17,7 @@ exports.getAllServices = async function(filter, paginator){
 	const collection = this.mongo.collection(collectionName);
 	const offset = paginator.getOffset();
 	const result = await collection.find(filter).skip(offset).limit(paginator.count).toArray();
-	return result.map(r => new ServicesResponse(r));
+	return result.map(r => new ServiceResponse(r));
 };
 
 exports.getServicesWithPages = async function(filter, paginator) {
@@ -33,9 +33,9 @@ exports.getServicesWithPages = async function(filter, paginator) {
 	}
 };
 
-exports.saveService = async function(Service){
+exports.saveService = async function(service){
 	const collection = this.mongo.collection(collectionName);
-	const entity = new ServicesCreate(Service);
+	const entity = new ServiceCreate(service);
 	await collection.insert(entity);
 };
 
@@ -57,7 +57,7 @@ exports.deleteService = async function(id){
 async function ServicesQuery(filter){
 	const collection = this.mongo.collection(collectionName);
 	const [Service] = await collection.find(filter).limit(1).toArray();
-	return new ServicesResponse(Service || {});
+	return new ServiceResponse(Service || {});
 }
 
 

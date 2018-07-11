@@ -9,7 +9,8 @@ const routes = [
 	require('./doctors'),
 	require('./hospitals'),
 	require('./drugs'),
-	require('./pharmacies')
+	require('./pharmacies'),
+	require('./services')
 ];
 
 const PREFIX = '/api';

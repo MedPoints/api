@@ -1,6 +1,6 @@
 class PriceModel {
-	constructor({price, mpts}) {
-		this.price = price;
+	constructor({dollars, mpts}) {
+		this.dollars = dollars;
 		this.mpts = mpts;
 	}
 }
