@@ -22,10 +22,10 @@ exports.getServices = async function({id, name}, paginator){
 	}
 };
 
-exports.saveService = async function(pharmacy){
+exports.saveService = async function(service){
 	const servicesDAL = await dal.open('services');
 	try{
-		await servicesDAL.savePharmacy(pharmacy)
+		await servicesDAL.saveService(service)
 	}catch(err){
 		log.error({id, name}, 'saveService error', err);
 		throw err;
@@ -34,10 +34,10 @@ exports.saveService = async function(pharmacy){
 	}
 };
 
-exports.updatePharmacy = async function(pharmacy){
+exports.updateService = async function(service){
 	const servicesDAL = await dal.open('services');
 	try{
-		await servicesDAL.updatePharmacy(pharmacy.id, pharmacy);
+		await servicesDAL.updateService(service.id, service);
 	}
 	catch(err){
 		log.error({id, name}, 'updateService error', err);
@@ -47,10 +47,10 @@ exports.updatePharmacy = async function(pharmacy){
 	}
 };
 
-exports.deletePharmacy = async function(id){
+exports.deleteService = async function(id){
 	const servicesDAL = await dal.open('Services');
 	try{
-		await servicesDAL.deletePharmacy(id);
+		await servicesDAL.deleteService(id);
 	}catch(err){
 		log.error({id, name}, 'deleteService error', err);
 		throw err;
