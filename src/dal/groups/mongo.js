@@ -1,11 +1,13 @@
-const collectionName = 'drugs';
+const collectionName = 'drug_groups';
 
-const ObjectId = require('mongodb').ObjectId;
+const {ObjectId} = require('mongodb');
+
+const {GroupModelCreated, GroupModelResponse} = require('../../models/group');
 
 exports.getAllCategories = async function(){
 	const collection = this.mongo.collection(collectionName);
 	const categories = await collection.find({}).toArray();
-	return categories.map(c => new DrugCategoryResponse(c));
+	return categories.map(c => new GroupModelResponse(c));
 };
 
 exports.getCategoryById = async function(id){
