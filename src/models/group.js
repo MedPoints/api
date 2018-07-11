@@ -7,21 +7,21 @@ class BaseGroupModel {
 	}
 }
 
-class GroupModelCreated extends BaseGroupModel {
+class GroupCreate extends BaseGroupModel {
 	constructor(entity) {
 		super(entity);
 		this._id = ObjectId(entity.id || entity._id);
 	}
 }
 
-class GroupModelResponse extends BaseGroupModel {
+class GroupResponse extends BaseGroupModel {
 	constructor(entity) {
 		super(entity);
 		this.id = entity.id || entity._id;
 	}
 }
 
-class GroupDrubModelResponse extends GroupModelResponse {
+class GroupDrugModelResponse extends GroupResponse {
 	constructor(entity) {
 		super(entity);
 		delete this.drugs;
@@ -29,6 +29,6 @@ class GroupDrubModelResponse extends GroupModelResponse {
 }
 
 
-exports.GroupModelCreated = GroupModelCreated;
-exports.GroupModelResponse = GroupModelResponse;
-exports.GroupDrubModelResponse = GroupDrubModelResponse;
+exports.GroupCreate = GroupCreate;
+exports.GroupResponse = GroupResponse;
+exports.GroupDrugModelResponse = GroupDrugModelResponse;

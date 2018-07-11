@@ -3,6 +3,7 @@ const collectionName = 'pharmacies';
 const ObjectId = require('mongodb').ObjectId;
 
 const {PharmaciesCreate, PharmaciesResponse} = require('../../models/pharmacies');
+const {PharmacyRate} = require('../../models/rates');
 
 exports.getPharmacyById = async function(id){
 	return pharmaciesQuery.call(this, {_id: ObjectId(id)});
@@ -44,14 +45,22 @@ exports.getCount = async function(filter={}){
 	return collection.count(filter || {});
 };
 
-exports.updatePharmacy = async function(id, hospital){
+exports.updatePharmacy = async function(id, pharmacy){
 	const collection = this.mongo.collection(collectionName);
-	await collection.update({_id: ObjectId(id)}, hospital);
+	await collection.update({_id: ObjectId(id)}, pharmacy);
 };
 
 exports.deletePharmacy = async function(id){
 	const collection = this.mongo.collection(collectionName);
 	await collection.remove({_id: ObjectId(id)});
+};
+
+exports.changeRate = async function(id, rate){
+	const collection = this.mongo.collection(collectionName);
+	const entity = new PharmacyRate(rate);
+	await collection.update({_id: ObjectId(id)}, {
+		$push: {ratings: entity}
+	});
 };
 
 async function pharmaciesQuery(filter){

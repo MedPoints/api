@@ -2,12 +2,12 @@ const collectionName = 'drug_groups';
 
 const {ObjectId} = require('mongodb');
 
-const {GroupModelCreated, GroupModelResponse} = require('../../models/group');
+const {GroupCreate, GroupResponse} = require('../../models/group');
 
 exports.getAllCategories = async function(){
 	const collection = this.mongo.collection(collectionName);
 	const categories = await collection.find({}).toArray();
-	return categories.map(c => new GroupModelResponse(c));
+	return categories.map(c => new GroupResponse(c));
 };
 
 exports.getCategoryById = async function(id){
@@ -20,17 +20,19 @@ exports.getCategoryByName = async function(name){
 
 exports.saveCategory = async function(category){
 	const collection = this.mongo.collection(collectionName);
-	const entity = new DrugCatrgoryCreate(category);
+	const entity = new GroupCreate(category);
 	await collection.insert(entity);
+};
+
+exports.updateCategory = async function(id, category){
+	const collection = this.mongo.collection(collectionName);
+	await collection.update({_id: ObjectId(id)}, category);
 };
 
 exports.getCategoryByFilter = async function(filter){
 	const collection = this.mongo.collection(collectionName);
 	const [result] = await collection.find(filter).limit(1).toArray();
-	if (!result) {
-		return null;
-	}
-	return new DrugCategoryResponse(result[0]);
+	return new GroupResponse(result || {});
 };
 
 exports.deleteCategory = async function(id){
