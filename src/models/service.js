@@ -13,14 +13,14 @@ class BaseServiceModel {
 	}
 }
 
-class ServiceModelCreated extends BaseServiceModel {
+class ServiceCreate extends BaseServiceModel {
 	constructor(entity) {
 		super(entity);
 		this._id = ObjectId(entity.id || entity._id);
 	}
 }
 
-class ServiceModelResponse extends BaseServiceModel {
+class ServiceResponse extends BaseServiceModel {
 	constructor(entity) {
 		super(entity);
 		this.id = entity.id || entity._id;
@@ -28,5 +28,5 @@ class ServiceModelResponse extends BaseServiceModel {
 }
 
 
-exports.ServiceModelCreated = ServiceModelCreated;
-exports.ServiceModelResponse = ServiceModelResponse;
+exports.ServiceCreate = ServiceCreate;
+exports.ServiceResponse = ServiceResponse;

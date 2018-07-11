@@ -13,5 +13,8 @@
   },
   "pharmacies": {
     "mongo": true
+  },
+  "services": {
+    "mongo": true
   }
 }

@@ -1,4 +1,4 @@
-const ObjectId = require("mongodb").ObjectId;
+const {ObjectId} = require("mongodb");
 
 class BaseGroupModel {
 	constructor({name, drugs}) {
