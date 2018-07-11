@@ -8,9 +8,9 @@ exports.getServices = async function({id, name}, paginator){
 	const servicesDAL = await dal.open('services');
 	try{
 		if(id){
-			return servicesDAL.getPharmacyById(id);
+			return servicesDAL.getServiceById(id);
 		}else if(name){
-			return servicesDAL.getPharmacyByName(name);
+			return servicesDAL.getServiceByName(name);
 		}
 		const result = await servicesDAL.getServicesWithPages({}, paginator) || {};
 		return new ResponseWithMeta(result)
