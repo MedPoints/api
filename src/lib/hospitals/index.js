@@ -36,8 +36,7 @@ exports.getHospital = async ({id, name}, paginator) => {
 exports.saveHospital = async (hospital) => {
     const hospitalsDal = await dal.open('hospitals');
     try{
-        const model = buildHospitalModel(hospital);
-        await hospitalsDal.saveHospital(model);
+        await hospitalsDal.saveHospital(hospital);
     }catch(err){
         log.error('saveHospital error', err);
         throw err;
@@ -113,7 +112,6 @@ function buildHospitalModel(hospital){
                 }
                 break;
             case 'photos':
-            case 'openingHours':
             case 'doctors':
                 if(!Array.isArray(hospital[key])){
                     log.warning({key}, 'wrong schema');
