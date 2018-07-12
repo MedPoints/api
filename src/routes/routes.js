@@ -8,7 +8,9 @@ const {getMiddlewareLogger} = require('../utils/logger');
 const routes = [
 	require('./doctors'),
 	require('./hospitals'),
-	require('./drugs')
+	require('./drugs'),
+	require('./pharmacies'),
+	require('./services')
 ];
 
 const PREFIX = '/api';

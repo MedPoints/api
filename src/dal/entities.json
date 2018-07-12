@@ -10,5 +10,11 @@
   },
   "drugs": {
     "mongo": true
+  },
+  "pharmacies": {
+    "mongo": true
+  },
+  "services": {
+    "mongo": true
   }
 }
