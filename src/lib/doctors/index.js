@@ -13,15 +13,16 @@ const log = require('../../utils/logger').getLogger('DOCTORS');
 exports.getDoctor = async function({id, name, specialization}, paginator){
     const doctorDAL = await dal.open('doctors');
     try{
+    	const filter = {};
         if(id){
             return doctorDAL.getDoctorById(id);
-        }else if(name){
-	        return doctorDAL.getDoctorByName(name);
-        }else if(specialization){
-        	const result = await doctorDAL.getDoctorsWithPages({specialization}, paginator) || {};
-        	return new ResponseWithMeta(result)
         }
-	    const result = await doctorDAL.getDoctorsWithPages({}, paginator) || {};
+        if(name){
+        	filter.name = name;
+        }else if(specialization){
+        	filter.specialization = specialization;
+        }
+	    const result = await doctorDAL.getDoctorsWithPages(filter, paginator) || {};
 	    return new ResponseWithMeta(result)
     }catch(err){
         log.error({id, name}, 'getDoctor error', err);

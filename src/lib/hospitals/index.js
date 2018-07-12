@@ -12,14 +12,15 @@ const log = require('../../utils/logger').getLogger('HOSPITALS');
 exports.getHospital = async ({id, name}, paginator) => {
     const hospitalsDal = await dal.open('hospitals');
     try{
+        const filter = {};
         if(id){
             return hospitalsDal.getHospitalById(id);
-        }else if(name){
-            return hospitalsDal.getHospitalByName(name);
-        }else{
-            const result = await hospitalsDal.getHospitalsWithPages({}, paginator) || {};
-            return new ResponseWithMeta(result);
         }
+        if(name){
+	        filter.name = name;
+        }
+        const result = await hospitalsDal.getHospitalsWithPages(filter, paginator) || {};
+        return new ResponseWithMeta(result);
     }catch(err){
         log.error({id, name}, 'getHospital error', err);
         throw err;
