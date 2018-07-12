@@ -3,7 +3,7 @@ const {ObjectId} = require("mongodb");
 class BaseGroupModel {
 	constructor({name, drugs}) {
 		this.name = name;
-		this.drugs = drugs;
+		this.drugs = drugs || [];
 	}
 }
 
@@ -18,6 +18,7 @@ class GroupResponse extends BaseGroupModel {
 	constructor(entity) {
 		super(entity);
 		this.id = entity.id || entity._id;
+		this.drugs = this.drugs.length;
 	}
 }
 

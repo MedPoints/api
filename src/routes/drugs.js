@@ -4,36 +4,39 @@ const drugs = require('../lib/drugs/index');
 
 const router = new Router();
 
-router.get('/category', async (req, res, next) => {
+router.get('/', async (req, res, next) => {
 	const {id, name} = req.query;
+	const paginator = req.paginator;
 	try{
-		if(!id && !name){
-			res.result = await drugs.getAllCategories();
-		}else {
-			res.result = await drugs.getCategory({id, name});
-		}
+		res.result = await drugs.getDrugs({name, id}, paginator);
 		next();
 	}catch(err){
 		next(err);
 	}
-	next();
 });
 
-router.post('/category', (req, res, next) => {
-	next();
+
+router.post('/', async (req, res, next) => {
+	try{
+		await drugs.saveDrug(req.body);
+		res.result = 'OK';
+		next();
+	}catch(err){
+		next(err);
+	}
 });
 
-router.put('/category', (req, res, next) => {
-	next();
+router.put('/', async (req, res, next) => {
+	const doctor = req.body;
+	try{
+		await drugs.updateDrug(doctor);
+		res.result = 'OK';
+		next();
+	}catch(err){
+		next(err);
+	}
 });
 
-router.delete('/category', (req, res, next) => {
-	next();
-});
-
-router.get('/', (req, res, next) => {
-	next();
-});
 
 exports.name = 'drugs';
 exports.module = router;

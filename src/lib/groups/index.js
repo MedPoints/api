@@ -4,9 +4,13 @@ const ResponseWithMeta = require("../../routes/responses").ResponseWithMeta;
 const log = require('../../utils/logger').getLogger('DRUGS_GROUPS');
 
 
-exports.getAllGroups = async function(filter, paginator){
+exports.getAllGroups = async function({name}, paginator){
 	const groupsDal = await dal.open('groups');
 	try{
+		const filter = {};
+		if(name) {
+			filter.name = name;
+		}
 		const result = await groupsDal.getGroupsWithPages(filter, paginator);
 		return new ResponseWithMeta(result);
 	}catch(err){

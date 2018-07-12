@@ -2,36 +2,55 @@ const collectionName = 'drugs';
 
 const ObjectId = require('mongodb').ObjectId;
 
-exports.getAllCategories = async function(){
+const {DrugModelCreate, DrugModelResponse} = require('../../models/drug');
+
+exports.getAllDrugs = async function(filter, paginator){
 	const collection = this.mongo.collection(collectionName);
-	const categories = await collection.find({}).toArray();
-	return categories.map(c => new DrugCategoryResponse(c));
+	const offset = paginator.getOffset();
+	const result = await collection.find(filter).skip(offset).limit(paginator.count).toArray();
+	return result.map(c => new DrugModelResponse(c));
 };
 
-exports.getCategoryById = async function(id){
-	return exports.getCategoryByFilter({_id: ObjectId(id)});
+exports.getDrugById = async function(id){
+	return exports.getDrugByFilter({_id: ObjectId(id)});
 };
 
-exports.getCategoryByName = async function(name){
-	return exports.getCategoryByFilter({name: name});
-};
-
-exports.saveCategory = async function(category){
+exports.saveDrug = async function(drug){
 	const collection = this.mongo.collection(collectionName);
-	const entity = new DrugCatrgoryCreate(category);
+	const entity = new DrugModelCreate(drug);
 	await collection.insert(entity);
 };
 
-exports.getCategoryByFilter = async function(filter){
+exports.updateDrug = async function(id, drug){
+	const collection = this.mongo.collection(collectionName);
+	await collection.update({_id: ObjectId(id)}, drug);
+};
+
+exports.getDrugByFilter = async function(filter){
 	const collection = this.mongo.collection(collectionName);
 	const [result] = await collection.find(filter).limit(1).toArray();
 	if (!result) {
 		return null;
 	}
-	return new DrugCategoryResponse(result[0]);
+	return new DrugModelResponse(result[0]);
 };
 
-exports.deleteCategory = async function(id){
+exports.getCount = async function(filter={}){
 	const collection = this.mongo.collection(collectionName);
-	await collection.remove({_id: ObjectId(id)});
+	return collection.count(filter || {});
 };
+
+exports.getDrugsWithPages = async function(filter, paginator) {
+	const [doctors, pages] = await Promise.all([
+		exports.getAllDrugs(filter, paginator),
+		exports.getCount(filter)
+	]);
+	return {
+		data: doctors,
+		meta: {
+			pages: Math.ceil(pages / paginator.count),
+			current: paginator.page,
+		}
+	}
+};
+
