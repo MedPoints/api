@@ -44,5 +44,5 @@ router.delete('/', (req, res, next) => {
 	next();
 });
 
-exports.name = 'group';
+exports.name = 'groups';
 exports.module = router;
