@@ -3,14 +3,16 @@ const ResponseWithMeta = require("../../routes/responses").ResponseWithMeta;
 
 const log = require('../../utils/logger').getLogger('DRUGS');
 
-exports.getDrugs = async ({name, id}, paginator) => {
+exports.getDrugs = async ({name, id, groupId}, paginator) => {
 	const drugsDal = await dal.open('drugs');
 	try{
 		if(id){
 			return drugsDal.getDrugById(id);
 		}
 		const filter = {};
-		if(name) {
+		if (groupId) {
+			filter['group.id'] =  groupId;
+		}else if(name) {
 			filter.name = name;
 		}
 		const result = await drugsDal.getDrugsWithPages(filter, paginator);
