@@ -11,7 +11,7 @@ class BaseDrugModel {
 		this.price = new Price(price);
 		this.is_covered_by_insurance = is_covered_by_insurance;
 		this.is_by_prescription = is_by_prescription;
-		this.group = new GroupDrugModelResponse(group);
+		this.group = new GroupDrugModelResponse(group || {});
 	}
 }
 

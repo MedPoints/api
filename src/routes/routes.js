@@ -39,7 +39,6 @@ exports.initServer = ({log}) => {
 		next();
 	});
 	app.use((err, req, res, next) => {
-		req.log.error(err, 'INTERNAL_ERROR');
 		res.status(500).json({error: err});
 		next();
 	});

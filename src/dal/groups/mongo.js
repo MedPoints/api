@@ -4,10 +4,11 @@ const {ObjectId} = require('mongodb');
 
 const {GroupCreate, GroupResponse} = require('../../models/group');
 
-exports.getAllCategories = async function(){
+exports.getAllCategories = async function(filter, paginator){
 	const collection = this.mongo.collection(collectionName);
-	const categories = await collection.find({}).toArray();
-	return categories.map(c => new GroupResponse(c));
+	const offset = paginator.getOffset();
+	const result = await collection.find(filter).skip(offset).limit(paginator.count).toArray();
+	return result.map(c => new GroupResponse(c));
 };
 
 exports.getCategoryById = async function(id){
@@ -38,4 +39,23 @@ exports.getCategoryByFilter = async function(filter){
 exports.deleteCategory = async function(id){
 	const collection = this.mongo.collection(collectionName);
 	await collection.remove({_id: ObjectId(id)});
+};
+
+exports.getCount = async function(filter={}){
+	const collection = this.mongo.collection(collectionName);
+	return collection.count(filter || {});
+};
+
+exports.getGroupsWithPages = async function(filter, paginator) {
+	const [doctors, pages] = await Promise.all([
+		exports.getAllCategories(filter, paginator),
+		exports.getCount(filter)
+	]);
+	return {
+		data: doctors,
+		meta: {
+			pages: Math.ceil(pages / paginator.count),
+			current: paginator.page,
+		}
+	}
 };
