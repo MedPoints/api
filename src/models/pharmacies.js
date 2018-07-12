@@ -2,11 +2,11 @@ const ObjectId = require("mongodb").ObjectId;
 const LocationModel = require('./location');
 
 class BasePharmaciesModel {
-	constructor({name, description, location, workTime, drugs}){
+	constructor({name, description, location, workTime, work_time, drugs}){
 		this.name = name;
 		this.description = description;
 		this.location = new LocationModel(location);
-		this.work_time = workTime;
+		this.work_time = workTime || work_time;
 		this.drugs = drugs || [];
 	}
 }
