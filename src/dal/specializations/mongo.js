@@ -5,6 +5,10 @@ const collectionName = 'specializations';
 const {SpecializationCreateModel, SpecializationResponseModel} = require('../../models/specialization');
 
 exports.getSpecializations = async function(filter, paginator){
+	const collection = this.mongo.collection(collectionName);
+	const offset = paginator.getOffset();
+	const specializations = await collection.find(filter).skip(offset).limit(paginator.count).toArray();
+	return specializations.map(specialization => new SpecializationResponseModel(specialization));
 };
 
 exports.getSpecializationById =  async function(id){

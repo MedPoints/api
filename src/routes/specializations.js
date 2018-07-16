@@ -14,5 +14,15 @@ router.get('/', async (req, res, next) => {
 	}
 });
 
+router.post('/', async (req, res, next) => {
+	try{
+		await specialization.saveSpecialization(req.body);
+		res.result = 'OK';
+		next();
+	}catch(err){
+		next(err);
+	}
+});
+
 exports.name = 'specializations';
 exports.module = router;
