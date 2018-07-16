@@ -47,6 +47,18 @@ exports.updateService = async function(service){
 	}
 };
 
+exports.getCount = async function(filter = {}) {
+	const servicesDAL = await dal.open('services');
+	try{
+		return servicesDAL.getCount(filter);
+	}catch(err){
+		log.error({}, 'getCount error', err);
+		throw err;
+	}finally{
+		servicesDAL.close();
+	}
+};
+
 exports.deleteService = async function(id){
 	const servicesDAL = await dal.open('Services');
 	try{

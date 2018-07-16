@@ -36,6 +36,15 @@ router.put('/', async (req, res, next) => {
 	}
 });
 
+router.get('/count', async (req, res, next) => {
+	try {
+		res.result = await hospital.getCount();
+		next();
+	}catch(err){
+		next(err);
+	}
+});
+
 router.delete('/', async (req, res, next) => {
 	const {id} = req.query;
 	try{

@@ -47,6 +47,18 @@ exports.updatePharmacy = async function(pharmacy){
 	}
 };
 
+exports.getCount = async function(filter = {}) {
+	const pharmaciesDal = await dal.open('pharmacies');
+	try{
+		return pharmaciesDal.getCount(filter);
+	}catch(err){
+		log.error({}, 'getCount error', err);
+		throw err;
+	}finally{
+		pharmaciesDal.close();
+	}
+};
+
 exports.deletePharmacy = async function(id){
 	const pharmaciesDAL = await dal.open('pharmacies');
 	try{

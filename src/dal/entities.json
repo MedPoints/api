@@ -19,5 +19,8 @@
   },
   "groups": {
     "mongo": true
+  },
+  "specializations": {
+    "mongo": true
   }
 }

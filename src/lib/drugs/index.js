@@ -18,7 +18,7 @@ exports.getDrugs = async ({name, id, groupId}, paginator) => {
 		const result = await drugsDal.getDrugsWithPages(filter, paginator);
 		return new ResponseWithMeta(result);
 	}catch(err){
-		log.error('getCategory error', err);
+		log.error('getDrugs error', err);
 		throw err;
 	}finally{
 		drugsDal.close();
@@ -30,7 +30,19 @@ exports.saveDrug = async function(entity){
 	try{
 		return drugsDal.saveDrug(entity);
 	}catch(err){
-		log.error({}, 'saveGroup error', err);
+		log.error({}, 'saveDrug error', err);
+		throw err;
+	}finally{
+		drugsDal.close();
+	}
+};
+
+exports.getCount = async function(filter = {}) {
+	const drugsDal = await dal.open('drugs');
+	try{
+		return drugsDal.getCount(filter);
+	}catch(err){
+		log.error({}, 'getCount error', err);
 		throw err;
 	}finally{
 		drugsDal.close();

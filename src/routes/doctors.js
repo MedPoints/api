@@ -49,6 +49,15 @@ router.delete('/', async (req, res, next) => {
 	}
 });
 
+router.get('/count', async (req, res, next) => {
+	try {
+		res.result = await doctors.getCount();
+		next();
+	}catch(err){
+		next(err);
+	}
+});
+
 router.post('/rating/:id', async (req, res, next) => {
 	const id = req.params.id;
 	const rate = req.body;

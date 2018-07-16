@@ -17,7 +17,7 @@ exports.getHospital = async ({id, name}, paginator) => {
             return hospitalsDal.getHospitalById(id);
         }
         if(name){
-	        filter.name = name;
+	        filter.name = {$regex: name};
         }
         const result = await hospitalsDal.getHospitalsWithPages(filter, paginator) || {};
         return new ResponseWithMeta(result);
@@ -61,6 +61,18 @@ exports.updateHospital = async (hospital) => {
     }finally{
         hospitalsDal.close()
     }
+};
+
+exports.getCount = async function(filter = {}) {
+	const hospitalsDal = await dal.open('hospitals');
+	try{
+		return hospitalsDal.getCount(filter);
+	}catch(err){
+		log.error({}, 'getCount error', err);
+		throw err;
+	}finally{
+		hospitalsDal.close();
+	}
 };
 
 /**

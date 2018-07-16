@@ -18,7 +18,7 @@ exports.getDoctor = async function({id, name, specialization}, paginator){
             return doctorDAL.getDoctorById(id);
         }
         if(name){
-        	filter.name = name;
+        	filter.name = {$regex: name};
         }else if(specialization){
         	filter.specialization = specialization;
         }
@@ -48,7 +48,6 @@ exports.saveDoctor = async (doctor) => {
     }
 };
 
-
 exports.updateDoctor = async (doctor) => {
 	const doctorsDal = await dal.open('doctors');
 	try{
@@ -67,6 +66,18 @@ exports.deleteDoctor = async (id) => {
 		await doctorsDal.deleteDoctor(id);
 	}catch(err){
 		log.error('deleteDoctor error', err);
+		throw err;
+	}finally{
+		doctorsDal.close();
+	}
+};
+
+exports.getCount = async (filter = {}) => {
+	const doctorsDal = await dal.open('doctors');
+	try{
+		return doctorsDal.getCount(filter);
+	}catch(err){
+		log.error('getCount error', err);
 		throw err;
 	}finally{
 		doctorsDal.close();

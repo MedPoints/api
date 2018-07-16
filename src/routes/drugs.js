@@ -26,6 +26,15 @@ router.post('/', async (req, res, next) => {
 	}
 });
 
+router.get('/count', async (req, res, next) => {
+	try {
+		res.result = await drugs.getCount();
+		next();
+	}catch(err){
+		next(err);
+	}
+});
+
 router.put('/', async (req, res, next) => {
 	const doctor = req.body;
 	try{
