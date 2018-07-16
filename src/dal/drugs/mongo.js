@@ -32,7 +32,7 @@ exports.getDrugByFilter = async function(filter){
 	if (!result) {
 		return null;
 	}
-	return new DrugModelResponse(result[0]);
+	return new DrugModelResponse(result || {});
 };
 
 exports.getCount = async function(filter={}){

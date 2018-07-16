@@ -19,7 +19,7 @@ class Worker extends BaseWorker{
 	 */
 	init(config){
 		DAL.initDAL();
-		routes.initServer({log: this._logger}).listen(config.port, () =>{
+		routes.initServer({log: this._logger}).listen(config.port, '0.0.0.0', () =>{
 			this._logger.info({port: config.port}, 'start server');
 		});
 	}
