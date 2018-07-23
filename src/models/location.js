@@ -1,11 +1,10 @@
 class LocationModel {
-	constructor({address, city, state, country, postCode, coordinates}) {
+	constructor({address, city, state, country, postCode}) {
 		this.address = address;
 		this.city = city;
 		this.state = state;
 		this.country = country;
 		this.postCode = postCode;
-		this.coordinates = coordinates;
 	}
 }
 
