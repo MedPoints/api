@@ -1,7 +1,9 @@
 const dal = require('../../dal/index');
 const ResponseWithMeta = require("../../routes/responses").ResponseWithMeta;
+const LocationsResponse = require("../../routes/responses").LocationsResponse;
 
 const log = require('../../utils/logger').getLogger('HOSPITALS');
+const HOSPITALS_DAL_NAME = 'hospitals';
 
 /**
  *
@@ -10,7 +12,7 @@ const log = require('../../utils/logger').getLogger('HOSPITALS');
  * @returns {Promise<ResponseWithMeta>}
  */
 exports.getHospital = async ({id, name}, paginator) => {
-    const hospitalsDal = await dal.open('hospitals');
+    const hospitalsDal = await dal.open(HOSPITALS_DAL_NAME);
     try{
         const filter = {};
         if(id){
@@ -29,13 +31,34 @@ exports.getHospital = async ({id, name}, paginator) => {
     }
 };
 
+/**
+ *
+ * @returns {Promise<LocationsResponse>}
+ */
+exports.getHospitalsLocations = async () => {
+    const hospitalsDal = await dal.open(HOSPITALS_DAL_NAME);
+    try{
+        const [worldsCount, groupedHospitals] = await Promise.all([
+            hospitalsDal.getCount(),
+            hospitalsDal.getHospitalsGroupedByLocation()
+        ]);
+
+        return new LocationsResponse({worldsCount, groupedHospitals});
+    }catch(err){
+        log.error({id, name}, 'getHospitalLocations error', err);
+        throw err;
+    }finally{
+        hospitalsDal.close();
+    }
+};
+
 
 /**
  * @param {Object} hospital
  * @returns {Promise<Void>}
  */
 exports.saveHospital = async (hospital) => {
-    const hospitalsDal = await dal.open('hospitals');
+    const hospitalsDal = await dal.open(HOSPITALS_DAL_NAME);
     try{
         await hospitalsDal.saveHospital(hospital);
     }catch(err){
@@ -51,7 +74,7 @@ exports.saveHospital = async (hospital) => {
  * @returns {Promise}
  */
 exports.updateHospital = async (hospital) => {
-    const hospitalsDal = await dal.open('hospitals');
+    const hospitalsDal = await dal.open(HOSPITALS_DAL_NAME);
     try{
         const model = buildHospitalModel(hospital);
         await hospitalsDal.updateHospital(model._id, model);
@@ -64,7 +87,7 @@ exports.updateHospital = async (hospital) => {
 };
 
 exports.getCount = async function(filter = {}) {
-	const hospitalsDal = await dal.open('hospitals');
+	const hospitalsDal = await dal.open(HOSPITALS_DAL_NAME);
 	try{
 		return hospitalsDal.getCount(filter);
 	}catch(err){
@@ -80,7 +103,7 @@ exports.getCount = async function(filter = {}) {
  * @returns {Promise<Void>}
  */
 exports.deleteHospital = async (id) => {
-    const hospitalsDal = await dal.open('hospitals');
+    const hospitalsDal = await dal.open(HOSPITALS_DAL_NAME);
     try{
         await hospitalsDal.deleteHospital(id);
     }catch(err){

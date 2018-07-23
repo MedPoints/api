@@ -6,3 +6,13 @@ class ResponseWithMeta {
 }
 
 exports.ResponseWithMeta = ResponseWithMeta;
+
+
+class LocationsResponse{
+    constructor({woldsCount, locations}) {
+        this.woldsCount = address;
+        this.locations = locations;
+    }
+}
+
+exports.LocationsResponse = LocationsResponse;

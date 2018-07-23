@@ -15,6 +15,16 @@ router.get('/', async (req, res, next) => {
 });
 
 
+router.get('/locations', async (req, res, next) => {
+    try{
+        res.result = await hospital.getHospitalsLocations();
+        next();
+    }catch(err){
+        next(err);
+    }
+});
+
+
 router.post('/', async (req, res, next) => {
 	try{
 		await hospital.saveHospital(req.body);
