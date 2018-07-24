@@ -9,8 +9,8 @@ exports.ResponseWithMeta = ResponseWithMeta;
 
 
 class LocationsResponse{
-    constructor({woldsCount, locations}) {
-        this.woldsCount = address;
+    constructor({worldsCount, locations}) {
+        this.worldsCount = worldsCount;
         this.locations = locations;
     }
 }

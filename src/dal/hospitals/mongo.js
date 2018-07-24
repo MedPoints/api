@@ -78,36 +78,24 @@ exports.getHospitalsWithPages = async function(filter, paginator) {
 
 exports.getHospitalsGroupedByLocation= async () => {
     const collection = this.mongo.collection(collectionName);
-    const result = await collection.aggregate(
-        [
-            // {
-            //     $project: {
-            //         _id: 0, // let's remove bson id's from request's result
-            //         price: 1, // we need this field
-            //         country: '$location.country' // and let's turn the nested field into usual field (usual renaming)
-            //     }
-            // },
-            {
-                $group: {
-                    _id: "$location.country",
-                    hospitals : {
-                        "$push": {
-                            "name": "$name",
-                            "address": "$location.address",
-                            "coordinates": "$location.coordinates"
-                        }
-                    },
-                    count: { $sum: 1 }
-                },
-                $project: {
-                    _id: 0,
-                    name: "$_id",
-                    hospitals: 1,
-                    count: 1
+    const result = await collection.aggregate([
+        {
+            $group: {
+                _id: "$location.country",
+                count: {$sum: 1},
+                hospitals: {
+                    "$push": {
+                        id: {$toString: "$_id"},
+                        name: "$name",
+                        address: "$location.address",
+                        coordinations: "$coordinations"
+                    }
                 }
             }
-        ]
-    )
+        },
+        {$project: {_id: 0, name: "$_id", count: 1, hospitals: 1}}
+    ]).toArray();
+    return result;
 };
 
 exports.getCount = async function(filter={}){

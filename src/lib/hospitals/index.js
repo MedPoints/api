@@ -42,11 +42,10 @@ exports.getHospitalsLocations = async () => {
             hospitalsDal.getCount(),
             hospitalsDal.getHospitalsGroupedByLocation()
         ]);
-
-        return new LocationsResponse({worldsCount, groupedHospitals});
+        return new LocationsResponse({ worldsCount : worldsCount, locations : groupedHospitals});
     }catch(err){
         log.error({id, name}, 'getHospitalLocations error', err);
-        throw err;
+        throw err
     }finally{
         hospitalsDal.close();
     }
