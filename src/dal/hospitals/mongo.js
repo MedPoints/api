@@ -64,7 +64,7 @@ exports.getAllHospitals = async function(filter, paginator) {
 };
 
 exports.getHospitalsWithPages = async function(filter, paginator) {
-	const [hospitals, pages] = await Promise.all([
+    const [hospitals, pages] = await Promise.all([
 		exports.getAllHospitals(filter, paginator),
 		exports.getCount(filter)
 	]);

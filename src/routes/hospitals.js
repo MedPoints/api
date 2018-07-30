@@ -5,9 +5,9 @@ const hospital = require('../lib/hospitals/index');
 const router = new Router();
 
 router.get('/', async (req, res, next) => {
-	const {id, name} = req.query;
+	const {id, name, country} = req.query;
 	try{
-		res.result = await hospital.getHospital({id, name}, req.paginator);
+		res.result = await hospital.getHospital({id, name, country}, req.paginator);
 		next();
 	}catch(err){
 		next(err);

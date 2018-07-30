@@ -11,7 +11,7 @@ const HOSPITALS_DAL_NAME = 'hospitals';
  * @param {String} name
  * @returns {Promise<ResponseWithMeta>}
  */
-exports.getHospital = async ({id, name}, paginator) => {
+exports.getHospital = async ({id, name, country}, paginator) => {
     const hospitalsDal = await dal.open(HOSPITALS_DAL_NAME);
     try{
         const filter = {};
@@ -20,6 +20,9 @@ exports.getHospital = async ({id, name}, paginator) => {
         }
         if(name){
 	        filter.name = {$regex: name};
+        }
+        if(country){
+            filter["location.country"] = country;
         }
         const result = await hospitalsDal.getHospitalsWithPages(filter, paginator) || {};
         return new ResponseWithMeta(result);
@@ -44,7 +47,7 @@ exports.getHospitalsLocations = async () => {
         ]);
         return new LocationsResponse({ worldsCount : worldsCount, locations : groupedHospitals});
     }catch(err){
-        log.error({id, name}, 'getHospitalLocations error', err);
+        log.error('getHospitalLocations error', err);
         throw err
     }finally{
         hospitalsDal.close();
