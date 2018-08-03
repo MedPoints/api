@@ -19,6 +19,7 @@ exports.saveDrug = async function(drug){
 	const collection = this.mongo.collection(collectionName);
 	const entity = new DrugModelCreate(drug);
 	await collection.insert(entity);
+	return entity;
 };
 
 exports.updateDrug = async function(id, drug){

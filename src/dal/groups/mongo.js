@@ -23,6 +23,7 @@ exports.saveCategory = async function(category){
 	const collection = this.mongo.collection(collectionName);
 	const entity = new GroupCreate(category);
 	await collection.insert(entity);
+	return entity;
 };
 
 exports.updateCategory = async function(id, category){

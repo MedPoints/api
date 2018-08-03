@@ -1,7 +1,7 @@
 const {ObjectId} = require('mongodb');
 
 const Price = require('./price');
-const {GroupDrugModelResponse} = require('./group');
+const {GroupDrugField} = require('./group');
 
 class BaseDrugModel {
 	constructor({name, short_descr, full_descr, group, price, is_covered_by_insurance, is_by_prescription}) {
@@ -11,7 +11,7 @@ class BaseDrugModel {
 		this.price = new Price(price);
 		this.is_covered_by_insurance = is_covered_by_insurance;
 		this.is_by_prescription = is_by_prescription;
-		this.group = new GroupDrugModelResponse(group || {});
+		this.group = new GroupDrugField(group || {});
 	}
 }
 

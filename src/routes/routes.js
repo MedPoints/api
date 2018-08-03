@@ -12,14 +12,15 @@ const routes = [
 	require('./pharmacies'),
 	require('./services'),
 	require('./group'),
-	require('./specializations')
+	require('./specializations'),
+	require('./maintenance')
 ];
 
 const PREFIX = '/api';
 
 exports.initServer = ({log}) => {
 	const app = express();
-	app.use(bodyParser.json());
+	app.use(bodyParser.json({limit: '10mb'}));
 	app.use(getMiddlewareLogger(log));
 	app.use((req, res, next) => {
 		req.paginator = createPaginator(req.query);

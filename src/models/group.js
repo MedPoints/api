@@ -14,6 +14,14 @@ class GroupCreate extends BaseGroupModel {
 	}
 }
 
+class GroupDrugField extends BaseGroupModel {
+	constructor(entity) {
+		super(entity);
+		this.id = (entity.id || entity._id).toString();
+		delete this.drugs;
+	}
+}
+
 class GroupResponse extends BaseGroupModel {
 	constructor(entity) {
 		super(entity);
@@ -32,4 +40,5 @@ class GroupDrugModelResponse extends GroupResponse {
 
 exports.GroupCreate = GroupCreate;
 exports.GroupResponse = GroupResponse;
+exports.GroupDrugField = GroupDrugField;
 exports.GroupDrugModelResponse = GroupDrugModelResponse;
