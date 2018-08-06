@@ -11,7 +11,7 @@ const HOSPITALS_DAL_NAME = 'hospitals';
  * @param {String} name
  * @returns {Promise<ResponseWithMeta>}
  */
-exports.getHospital = async ({id, name, country}, paginator) => {
+exports.getHospital = async ({id, name, country, specializationId}, paginator) => {
     const hospitalsDal = await dal.open(HOSPITALS_DAL_NAME);
     try{
         const filter = {};
@@ -23,6 +23,9 @@ exports.getHospital = async ({id, name, country}, paginator) => {
         }
         if(country){
             filter["location.country"] = country;
+        }
+        if(specializationId){
+            filter["specializations.id"] = { $eq: specializationId};
         }
         const result = await hospitalsDal.getHospitalsWithPages(filter, paginator) || {};
         return new ResponseWithMeta(result);
