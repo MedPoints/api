@@ -3,12 +3,15 @@ const ResponseWithMeta = require("../../routes/responses").ResponseWithMeta;
 
 const log = require('../../utils/logger').getLogger('DRUGS');
 
-exports.getDrugs = async ({name, id, groupId}, paginator, pharmacyId) => {
+exports.getDrugs = async ({name, id, groupId, pharmacyId}, paginator) => {
 	const drugsDal = await dal.open('drugs');
 	const pharmacyDal = await dal.open("pharmacies");
 	try{
 		if(id){
-			return drugsDal.getDrugById(id, pharmacyId);
+			let drug = await drugsDal.getDrugById(id, pharmacyId);
+			let pharmaciesByDrug = await pharmacyDal.getAllPharmaciesWithoutPages({ drugs : { id : id}});
+			drug.providers.pharmacies = pharmaciesByDrug;
+			return drug;
 		}
 		const filter = {};
 		if (groupId) {
@@ -18,11 +21,16 @@ exports.getDrugs = async ({name, id, groupId}, paginator, pharmacyId) => {
 		}
 
 		if(pharmacyId){
-            let pharmacy = pharmacyDal.getPharmacyById(pharmacyId);
-            filter._id = { $in : pharmacy.map(x => x.id) }
+            let pharmacy = await pharmacyDal.getPharmacyById(pharmacyId);
+            filter.ids = pharmacy.drugs.map(x => x.id)
 		}
 
         const result = await drugsDal.getDrugsWithPages(filter, paginator);
+		for(let drug of result.data){
+            let pharmaciesByDrug = await pharmacyDal.getAllPharmaciesWithoutPages({ drugs : { id : drug.id.toString()}});
+            drug.providers.pharmacies = pharmaciesByDrug;
+        }
+
 		return new ResponseWithMeta(result);
 	}catch(err){
 		log.error('getDrugs error', err);

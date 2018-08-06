@@ -4,7 +4,7 @@ const {ResponseWithMeta} = require('../../routes/responses');
 const log = require('../../utils/logger').getLogger('PHARMACIES');
 
 
-exports.getPharmacies = async function({id, name}, paginator){
+exports.getPharmacies = async function({id, name, drugId}, paginator){
 	const pharmaciesDAL = await dal.open('pharmacies');
 	try{
 		if(id){
@@ -12,7 +12,11 @@ exports.getPharmacies = async function({id, name}, paginator){
 		}else if(name){
 			return pharmaciesDAL.getPharmacyByName(name);
 		}
-		const result = await pharmaciesDAL.getPharmaciesWithPages({}, paginator) || {};
+		let filter = {};
+		if(drugId){
+			filter.drugs = { id : drugId};
+		}
+		const result = await pharmaciesDAL.getPharmaciesWithPages(filter, paginator) || {};
 		return new ResponseWithMeta(result)
 	}catch(err){
 		log.error({id, name}, 'getPharmacies error', err);

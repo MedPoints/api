@@ -42,6 +42,14 @@ exports.getCount = async function(filter={}){
 };
 
 exports.getDrugsWithPages = async function(filter, paginator) {
+    if(filter.ids){
+        filter._id = { $in : []};
+        for(let id of filter.ids){
+            filter._id.$in.push(new ObjectId("5b6878692e216618949b33e2"));
+        }
+        delete filter.ids;
+    }
+
 	const [doctors, pages] = await Promise.all([
 		exports.getAllDrugs(filter, paginator),
 		exports.getCount(filter)

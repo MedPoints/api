@@ -14,6 +14,12 @@ exports.getPharmacyByName = async function(name){
 	return pharmaciesQuery.call(this, {name});
 };
 
+exports.getAllPharmaciesWithoutPages = async function(filter){
+    const collection = this.mongo.collection(collectionName);
+    const result = await collection.find(filter).toArray();
+    return result.map(r => new PharmaciesResponse(r));
+};
+
 exports.getAllPharmacies = async function(filter, paginator){
 	const collection = this.mongo.collection(collectionName);
 	const offset = paginator.getOffset();
