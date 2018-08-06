@@ -5,7 +5,7 @@ class HospitalBaseModel {
 	constructor({name, network, departments, specializations, coordinations, email, phone, site, location, photos, doctors, workTime, work_time}) {
 		this.name = name || '';
 		this.network = network || '';
-		this.specializations = specializations || '';
+		this.specializations = specializations || [];
 		this.departments = departments || [];
 		this.coordinations = coordinations || {};
 		this.email = email || '';

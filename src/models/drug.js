@@ -27,7 +27,7 @@ class DrugModelResponse extends BaseDrugModel {
 	constructor(entity) {
 		super(entity);
 		this.id = entity.id || entity._id;
-		this.providers = {pharmacies: entity.providers.length};
+		this.providers = {pharmacies: entity.providers};
 	}
 }
 
