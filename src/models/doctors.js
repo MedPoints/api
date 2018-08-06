@@ -2,10 +2,11 @@ const ObjectId = require("mongodb").ObjectId;
 
 
 class BaseDoctorModel {
-	constructor({name, specialization, specializations, statement, education, ratings}) {
+	constructor({name, specialization, specializations, services, statement, education, ratings}) {
 		this.name = name;
 		this.specialization = specialization || '';
 		this.specializations = specializations || [];
+		this.services = services || [];
 		this.statement = statement || '';
 		this.ratings = ratings || [];
 		this.education = (education || []).map(ed => new Education(ed));
