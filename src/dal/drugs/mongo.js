@@ -45,7 +45,7 @@ exports.getDrugsWithPages = async function(filter, paginator) {
     if(filter.ids){
         filter._id = { $in : []};
         for(let id of filter.ids){
-            filter._id.$in.push(new ObjectId("5b6878692e216618949b33e2"));
+            filter._id.$in.push(new ObjectId(id));
         }
         delete filter.ids;
     }
