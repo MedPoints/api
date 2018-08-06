@@ -3,11 +3,12 @@ const ResponseWithMeta = require("../../routes/responses").ResponseWithMeta;
 
 const log = require('../../utils/logger').getLogger('DRUGS');
 
-exports.getDrugs = async ({name, id, groupId}, paginator) => {
+exports.getDrugs = async ({name, id, groupId}, paginator, pharmacyId) => {
 	const drugsDal = await dal.open('drugs');
+	const pharmacyDal = await dal.open("pharmacies");
 	try{
 		if(id){
-			return drugsDal.getDrugById(id);
+			return drugsDal.getDrugById(id, pharmacyId);
 		}
 		const filter = {};
 		if (groupId) {
@@ -15,13 +16,20 @@ exports.getDrugs = async ({name, id, groupId}, paginator) => {
 		}else if(name) {
 			filter.name = name;
 		}
-		const result = await drugsDal.getDrugsWithPages(filter, paginator);
+
+		if(pharmacyId){
+            let pharmacy = pharmacyDal.getPharmacyById(pharmacyId);
+            filter._id = { $in : pharmacy.map(x => x.id) }
+		}
+
+        const result = await drugsDal.getDrugsWithPages(filter, paginator);
 		return new ResponseWithMeta(result);
 	}catch(err){
 		log.error('getDrugs error', err);
 		throw err;
 	}finally{
 		drugsDal.close();
+        pharmacyDal.close();
 	}
 };
 

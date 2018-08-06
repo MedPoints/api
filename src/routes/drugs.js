@@ -5,10 +5,10 @@ const drugs = require('../lib/drugs/index');
 const router = new Router();
 
 router.get('/', async (req, res, next) => {
-	const {id, name, groupId} = req.query;
+	const {id, name, groupId, pharmacyId} = req.query;
 	const paginator = req.paginator;
 	try{
-		res.result = await drugs.getDrugs({name, id, groupId}, paginator);
+		res.result = await drugs.getDrugs({name, id, groupId, pharmacyId}, paginator);
 		next();
 	}catch(err){
 		next(err);
