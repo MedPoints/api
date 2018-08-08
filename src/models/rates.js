@@ -15,24 +15,24 @@ class DoctorRate extends Rate {
 
 class DoctorCommonRate {
 	constructor({knowledge, skills, attention, priceQuality}) {
-		this.knowledge = Math.min(knowledge || 0, 0);
-		this.skills = Math.min(skills || 0, 0);
-		this.attention = Math.min(attention || 0, 0);
-		this.priceQuality = Math.min(priceQuality || 0, 0);
+		this.knowledge = Math.min(knowledge || 0, 10);
+		this.skills = Math.min(skills || 0, 10);
+		this.attention = Math.min(attention || 0, 10);
+		this.priceQuality = Math.min(priceQuality || 0, 10);
 	}
 }
 
 class PharmacyRate extends Rate {
 	constructor(rate) {
 		super(rate);
+		this.commonRate = new PharmacyCommonRate(rate.commonRate || {});
 	}
 }
 
-class PharmacyCommonRate extends Rate {
+class PharmacyCommonRate {
 	constructor(entity) {
-		super(entity);
-		this.service = Math.min(entity.service || 0, 0);
-		this.priceQuality = Math.min(entity.priceQuality, 0);
+		this.service = Math.min(entity.service || 0, 10);
+		this.priceQuality = Math.min(entity.priceQuality, 10);
 	}
 }
 

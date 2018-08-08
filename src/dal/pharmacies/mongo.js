@@ -61,7 +61,7 @@ exports.deletePharmacy = async function(id){
 	await collection.remove({_id: ObjectId(id)});
 };
 
-exports.changeRate = async function(id, rate){
+exports.changeRateOfPharmacy = async function(id, rate){
 	const collection = this.mongo.collection(collectionName);
 	const entity = new PharmacyRate(rate);
 	await collection.update({_id: ObjectId(id)}, {

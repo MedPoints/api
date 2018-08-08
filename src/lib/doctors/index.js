@@ -89,7 +89,7 @@ exports.changeRateOfDoctor = async (id, rate) => {
 	try{
 		await doctorsDal.changeRateOfDoctor(id, rate);
 	}catch(err){
-		log.error('deleteDoctor error', err);
+		log.error('changeRateOfDoctor error', err);
 		throw err;
 	}finally{
 		doctorsDal.close();

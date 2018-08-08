@@ -74,3 +74,15 @@ exports.deletePharmacy = async function(id){
 		pharmaciesDAL.close();
 	}
 };
+
+exports.changeRateOfPharmacy = async function(id, rate){
+	const pharmacyDal = await dal.open('pharmacies');
+	try{
+		await pharmacyDal.changeRateOfPharmacy(id, rate);
+	}catch(err){
+		log.error('changeRateOfPharmacy error', err);
+		throw err;
+	}finally{
+		pharmacyDal.close();
+	}
+};

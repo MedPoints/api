@@ -58,17 +58,18 @@ router.get('/count', async (req, res, next) => {
 	}
 });
 
-// router.post('/rating/:id', async (req, res, next) => {
-// 	const id = req.params.id;
-// 	const rate = req.body;
-// 	try{
-// 		await pharmacies.changeRateOfDoctor(id, rate);
-// 		res.result = 'OK';
-// 		next();
-// 	}catch(err){
-// 		next(err);
-// 	}
-// });
+
+router.post('/rating/:id', async (req, res, next) => {
+	const id = req.params.id;
+	const rate = req.body;
+	try{
+		await pharmacies.changeRateOfPharmacy(id, rate);
+		res.result = 'OK';
+		next();
+	}catch(err){
+		next(err);
+	}
+});
 
 
 exports.module = router;

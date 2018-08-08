@@ -2,7 +2,7 @@ const ObjectId = require("mongodb").ObjectId;
 const LocationModel = require('./location');
 
 class BasePharmaciesModel {
-	constructor({name, network, coordinations, location, workTime, work_time, photos, drugs, short_descr, site}){
+	constructor({name, network, coordinations, location, workTime, work_time, photos, drugs, short_descr, site, ratings}){
 		this.name = name;
 		this.network = network;
         this.coordinations = coordinations || {};
@@ -12,6 +12,7 @@ class BasePharmaciesModel {
 		this.drugs = drugs || [];
 		this.short_descr = short_descr || "";
 		this.site = site || '';
+		this.ratings = ratings || [];
 	}
 }
 
@@ -26,6 +27,22 @@ class PharmaciesResponse extends BasePharmaciesModel {
 	constructor(entity) {
 		super(entity);
 		this.id = entity._id || entity.id;
+		this.rate = this.ratings.reduce((result, r) => result + r.rate, 0);
+		if (this.ratings.length > 0) {
+			this.rate /= this.ratings.length;
+			this.rate = Math.floor(this.rate);
+		}
+		const opinion = this.ratings.reduce((result, rate) => {
+			const {service, priceQuality} = rate.commonRate;
+			result.service += service;
+			result.priceQuality += priceQuality;
+			return result;
+		}, {service: 0, priceQuality: 0});
+		if (this.ratings.length !== 0) {
+			opinion.service /= this.ratings.length;
+			opinion.priceQuality /= this.ratings.length;
+		}
+		this.opinion = opinion;
 	}
 }
 
