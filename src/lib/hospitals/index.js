@@ -4,7 +4,10 @@ const ResponseWithMeta = require("../../routes/responses").ResponseWithMeta;
 const LocationsResponse = require("../../routes/responses").LocationsResponse;
 
 const log = require('../../utils/logger').getLogger('HOSPITALS');
+
+const DOCTORS_DAL_NAME = 'doctors';
 const HOSPITALS_DAL_NAME = 'hospitals';
+const SPECIALIZATION_DAL_NAME = 'specializations';
 
 /**
  *
@@ -30,13 +33,13 @@ exports.getHospital = async ({id, name, country, specializationId}, paginator) =
         }
         const result = await hospitalsDal.getHospitalsWithPages(filter, paginator) || {};
         for(const hospital of result.data){
-	        const specializations = new Set();
+	        const services = new Set();
 	        for(const doctor of hospital.doctors){
-	            for(const s of doctor.specialiazions){
-		            specializations.add(s);
-	            }
+	        	for(const service of doctor.services){
+			        services.add(service);
+		        }
             }
-            hospital.specialiazions = specializations.size;
+            hospital.services = services.size;
 	        hospital.doctors = hospital.doctors.length;
         }
         return new ResponseWithMeta(result);
