@@ -1,3 +1,4 @@
+const Promise = require('bluebird');
 const dal = require('../../dal/index');
 const ResponseWithMeta = require("../../routes/responses").ResponseWithMeta;
 const LocationsResponse = require("../../routes/responses").LocationsResponse;
@@ -28,12 +29,22 @@ exports.getHospital = async ({id, name, country, specializationId}, paginator) =
             filter["specializations.id"] = { $eq: specializationId};
         }
         const result = await hospitalsDal.getHospitalsWithPages(filter, paginator) || {};
+        for(const hospital of result.data){
+	        const specializations = new Set();
+	        for(const doctor of hospital.doctors){
+	            for(const s of doctor.specialiazions){
+		            specializations.add(s);
+	            }
+            }
+            hospital.specialiazions = specializations.size;
+	        hospital.doctors = hospital.doctors.length;
+        }
         return new ResponseWithMeta(result);
     }catch(err){
         log.error({id, name}, 'getHospital error', err);
         throw err;
     }finally{
-        hospitalsDal.close()
+        hospitalsDal.close();
     }
 };
 
