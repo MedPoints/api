@@ -15,8 +15,12 @@ exports.getDoctorById = async function(id){
 
 exports.getDoctors = async function(filter, paginator){
 	const collection = this.mongo.collection(collectionName);
-	const offset = paginator.getOffset();
-	const doctors = await collection.find(filter).skip(offset).limit(paginator.count).toArray();
+	let doctors = collection.find(filter);
+	if(paginator){
+		const offset = paginator.getOffset();
+		doctors = doctors.skip(offset).limit(paginator.count);
+	}
+	doctors = await doctors.toArray();
 	return doctors.map(d => new DoctorResponse(d));
 };
 

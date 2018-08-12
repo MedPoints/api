@@ -7,10 +7,10 @@ const log = require('../../utils/logger').getLogger('DOCTORS');
  * @param {String} id
  * @param {String} name
  * @param {String} specializations
- * @param {Paginator} paginators
+ * @param {Paginator} paginator
  * @returns {Promise<DoctorResponse|Array<DoctorResponse>|Object>}
  */
-exports.getDoctor = async function({id, name, specialization}, paginator){
+exports.getDoctor = async function({id, name, specialization, service}, paginator){
     const doctorDAL = await dal.open('doctors');
     try{
     	const filter = {};
@@ -21,6 +21,8 @@ exports.getDoctor = async function({id, name, specialization}, paginator){
         	filter.name = {$regex: name};
         }else if(specialization){
         	filter.specialization = specialization;
+        }else if(service){
+        	filter.services = service;
         }
 	    const result = await doctorDAL.getDoctorsWithPages(filter, paginator) || {};
 	    return new ResponseWithMeta(result)

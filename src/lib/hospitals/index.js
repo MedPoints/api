@@ -13,10 +13,14 @@ const SPECIALIZATION_DAL_NAME = 'specializations';
  *
  * @param {String} id
  * @param {String} name
+ * @param {String} country
+ * @param {String} specializationId
+ * @param {String} service
  * @returns {Promise<ResponseWithMeta>}
  */
-exports.getHospital = async ({id, name, country, specializationId}, paginator) => {
+exports.getHospital = async ({id, name, country, specializationId, service}, paginator) => {
     const hospitalsDal = await dal.open(HOSPITALS_DAL_NAME);
+    const doctorsDal = await dal.open(DOCTORS_DAL_NAME);
     try{
         const filter = {};
         if(id){
@@ -31,22 +35,31 @@ exports.getHospital = async ({id, name, country, specializationId}, paginator) =
         if(specializationId){
             filter["specializations.id"] = { $eq: specializationId};
         }
+        if(service){
+        	let doctors = await doctorsDal.getDoctors({services: service}, null);
+        	doctors = doctors.map(doctor => doctor.id.toString());
+        	filter.doctors = {$in: doctors};
+        }
         const result = await hospitalsDal.getHospitalsWithPages(filter, paginator) || {};
-        for(const hospital of result.data){
+	    result.data = await Promise.map(result.data, async (hospital) => {
 	        const services = new Set();
-	        for(const doctor of hospital.doctors){
-	        	for(const service of doctor.services){
+	        await Promise.each(hospital.doctors, async (id) => {
+	        	const doctor = await doctorsDal.getDoctorById(id);
+		        for(const service of doctor.services){
 			        services.add(service);
 		        }
-            }
-            hospital.services = services.size;
+	        });
+	
+	        hospital.services = services.size;
 	        hospital.doctors = hospital.doctors.length;
-        }
+	        return hospital;
+        });
         return new ResponseWithMeta(result);
     }catch(err){
         log.error({id, name}, 'getHospital error', err);
         throw err;
     }finally{
+    	doctorsDal.close();
         hospitalsDal.close();
     }
 };
