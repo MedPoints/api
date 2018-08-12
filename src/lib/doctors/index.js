@@ -1,3 +1,4 @@
+const ObjectId = require('mongodb').ObjectId;
 const dal = require('../../dal/index');
 const {ResponseWithMeta} = require('../../routes/responses');
 
@@ -10,14 +11,29 @@ const log = require('../../utils/logger').getLogger('DOCTORS');
  * @param {Paginator} paginator
  * @returns {Promise<DoctorResponse|Array<DoctorResponse>|Object>}
  */
-exports.getDoctor = async function({id, name, specialization, service}, paginator){
+exports.getDoctor = async function({id, name, specialization, service, hospital}, paginator){
     const doctorDAL = await dal.open('doctors');
+    const hospitalDAL = await dal.open('hospitals');
     try{
     	const filter = {};
         if(id){
             return doctorDAL.getDoctorById(id);
         }
-        if(name){
+        if(hospital){
+        	const hosp = await hospitalDAL.getHospitalById(hospital) || {};
+        	if(!hosp){
+        		return new ResponseWithMeta({
+			        data: [],
+			        meta: {
+				        pages: 0,
+				        current: paginator.page,
+			        }
+		        });
+	        }
+	        const doctors = hosp.doctors.map(d => ObjectId(d));
+        	filter._id = {$in: doctors};
+        }
+        else if(name){
         	filter.name = {$regex: name};
         }else if(specialization){
         	filter.specialization = specialization;
@@ -31,6 +47,7 @@ exports.getDoctor = async function({id, name, specialization, service}, paginato
         throw err;
     }finally{
         doctorDAL.close();
+        hospitalDAL.close();
     }
 };
 
