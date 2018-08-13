@@ -21,10 +21,24 @@ const SPECIALIZATION_DAL_NAME = 'specializations';
 exports.getHospital = async ({id, name, country, specializationId, service}, paginator) => {
     const hospitalsDal = await dal.open(HOSPITALS_DAL_NAME);
     const doctorsDal = await dal.open(DOCTORS_DAL_NAME);
+	const getCountOfServicesAndDoctors = async (hospital) => {
+		const services = new Set();
+		await Promise.each(hospital.doctors, async (id) => {
+			const doctor = await doctorsDal.getDoctorById(id);
+			for(const service of doctor.services){
+				services.add(service);
+			}
+		});
+		
+		hospital.services = services.size;
+		hospital.doctors = hospital.doctors.length;
+		return hospital;
+	};
     try{
         const filter = {};
         if(id){
-            return hospitalsDal.getHospitalById(id);
+            const hospital = await hospitalsDal.getHospitalById(id);
+            return getCountOfServicesAndDoctors(hospital);
         }
         if(name){
 	        filter.name = {$regex: name};
@@ -41,19 +55,7 @@ exports.getHospital = async ({id, name, country, specializationId, service}, pag
         	filter.doctors = {$in: doctors};
         }
         const result = await hospitalsDal.getHospitalsWithPages(filter, paginator) || {};
-	    result.data = await Promise.map(result.data, async (hospital) => {
-	        const services = new Set();
-	        await Promise.each(hospital.doctors, async (id) => {
-	        	const doctor = await doctorsDal.getDoctorById(id);
-		        for(const service of doctor.services){
-			        services.add(service);
-		        }
-	        });
-	
-	        hospital.services = services.size;
-	        hospital.doctors = hospital.doctors.length;
-	        return hospital;
-        });
+	    result.data = await Promise.map(result.data, getCountOfServicesAndDoctors);
         return new ResponseWithMeta(result);
     }catch(err){
         log.error({id, name}, 'getHospital error', err);
