@@ -30,8 +30,7 @@ exports.getDoctor = async function({id, name, specialization, service, hospital}
 			        }
 		        });
 	        }
-	        const doctors = hosp.doctors.map(d => ObjectId(d));
-        	filter._id = {$in: doctors};
+        	filter._id = {$in: hosp.doctors.map(ObjectId)};
         }
         else if(name){
         	filter.name = {$regex: name};
