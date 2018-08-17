@@ -21,6 +21,7 @@ const SPECIALIZATION_DAL_NAME = 'specializations';
 exports.getHospital = async ({id, name, country, specializationId, service}, paginator) => {
     const hospitalsDal = await dal.open(HOSPITALS_DAL_NAME);
     const doctorsDal = await dal.open(DOCTORS_DAL_NAME);
+    const serviceDal = await dal.open('services');
 	const getCountOfServicesAndDoctors = async (hospital) => {
 		const services = new Set();
 		await Promise.each(hospital.doctors, async (id) => {
@@ -50,9 +51,9 @@ exports.getHospital = async ({id, name, country, specializationId, service}, pag
             filter["specializations.id"] = { $eq: specializationId};
         }
         if(service){
-        	let doctors = await doctorsDal.getDoctors({services: service}, null);
-        	doctors = doctors.map(doctor => doctor.id.toString());
-        	filter.doctors = {$in: doctors};
+            const s = await serviceDal.getServiceById(service, true);
+            let hospitalIds = s.providers && s.providers.hospitals || [];
+        	filter._id = {$in: Array.from(hospitalIds).map(ObjectId)};
         }
         const result = await hospitalsDal.getHospitalsWithPages(filter, paginator) || {};
 	    result.data = await Promise.map(result.data, getCountOfServicesAndDoctors);
@@ -63,6 +64,7 @@ exports.getHospital = async ({id, name, country, specializationId, service}, pag
     }finally{
     	doctorsDal.close();
         hospitalsDal.close();
+	    serviceDal.close();
     }
 };
 

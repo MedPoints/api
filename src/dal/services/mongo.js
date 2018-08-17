@@ -4,8 +4,8 @@ const ObjectId = require('mongodb').ObjectId;
 
 const {ServiceCreate, ServiceResponse} = require('../../models/service');
 
-exports.getServiceById = async function(id){
-	return ServicesQuery.call(this, {_id: ObjectId(id)});
+exports.getServiceById = async function(id, raw=false){
+	return ServicesQuery.call(this, {_id: ObjectId(id)}, raw);
 };
 
 
@@ -54,10 +54,13 @@ exports.deleteService = async function(id){
 	await collection.remove({_id: ObjectId(id)});
 };
 
-async function ServicesQuery(filter){
+async function ServicesQuery(filter, raw=false){
 	const collection = this.mongo.collection(collectionName);
-	const [Service] = await collection.find(filter).limit(1).toArray();
-	return new ServiceResponse(Service || {});
+	const [service] = await collection.find(filter).limit(1).toArray();
+	if(raw){
+		return service;
+	}
+	return new ServiceResponse(service || {});
 }
 
 
