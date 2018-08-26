@@ -25,6 +25,17 @@ router.get('/:id/services', async (req, res, next) => {
 	}
 });
 
+router.get('/:id/hospitals', async (req, res, next) => {
+	const {id} = req.params;
+	const {service} = req.query;
+	try{
+		res.result = await doctors.getHospitalsByDoctor({id, service});
+		next();
+	}catch(err){
+		next(err);
+	}
+});
+
 
 router.post('/', async (req, res, next) => {
 	const doctor = req.body;

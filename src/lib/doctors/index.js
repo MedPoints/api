@@ -68,6 +68,22 @@ exports.getServicesByDoctorId = async function(id){
 	}
 };
 
+exports.getHospitalsByDoctor = async function({id, service}){
+	const hospitalDAL = await dal.open('hospitals');
+	try{
+		const filter = {
+			$and: [
+				{services: service},
+				{doctors: id}
+			]
+		};
+		const hospitals = await hospitalDAL.getHospitalsByCustomFilter(filter);
+		return hospitals;
+	}finally{
+		hospitalDAL.close();
+	}
+};
+
 /**
  * @param {Object} doctor
  * @returns {Promise}
