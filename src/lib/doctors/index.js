@@ -1,3 +1,4 @@
+const Promise = require('bluebird');
 const ObjectId = require('mongodb').ObjectId;
 const dal = require('../../dal/index');
 const {ResponseWithMeta} = require('../../routes/responses');
@@ -48,6 +49,23 @@ exports.getDoctor = async function({id, name, specialization, service, hospital}
         doctorDAL.close();
         hospitalDAL.close();
     }
+};
+
+exports.getServicesByDoctorId = async function(id){
+	const doctorDAL = await dal.open('doctors');
+	const servicesDAL = await dal.open('services');
+	try{
+		const doctor = await doctorDAL.getDoctorById(id);
+		if(!doctor){
+			return [];
+		}
+		const serviceIds = doctor.services || [];
+		const result = await Promise.map(serviceIds, async (serviceId) => servicesDAL.getServiceById(serviceId));
+		return result;
+	}finally{
+		doctorDAL.close();
+		servicesDAL.close();
+	}
 };
 
 /**

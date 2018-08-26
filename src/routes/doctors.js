@@ -15,6 +15,16 @@ router.get('/', async (req, res, next) => {
 	}
 });
 
+router.get('/:id/services', async (req, res, next) => {
+	const {id} = req.params;
+	try{
+		res.result = await doctors.getServicesByDoctorId(id);
+		next();
+	}catch(err){
+		next(err);
+	}
+});
+
 
 router.post('/', async (req, res, next) => {
 	const doctor = req.body;

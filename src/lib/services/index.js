@@ -6,7 +6,7 @@ const {ResponseWithMeta} = require('../../routes/responses');
 const log = require('../../utils/logger').getLogger('SERVICES');
 
 
-exports.getServices = async function({id, name, hospital}, paginator){
+exports.getServices = async function({id, name, hospital, doctor}, paginator){
 	const servicesDAL = await dal.open('services');
 	const doctorsDAL = await dal.open('doctors');
 	const hospitalDAL = await dal.open('hospitals');
