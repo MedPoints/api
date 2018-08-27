@@ -110,5 +110,5 @@ exports.changeRateOfDoctor = async function(id, rate){
 async function getDoctorByFilter(filter){
     const collection = this.mongo.collection(collectionName);
     const result = await collection.find(filter).limit(1).toArray();
-    return new DoctorResponse(result[0]);
+    return new DoctorResponse(result[0] || {});
 }

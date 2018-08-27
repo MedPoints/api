@@ -58,7 +58,8 @@ exports.getHospitalByName = async function(name){
 
 exports.getHospitalsByCustomFilter = async function(filter){
 	const collection = this.mongo.collection(collectionName);
-	return collection.find(filter).toArray();
+	const result = await collection.find(filter).toArray();
+	return result.map(r => new HospitalResponse(r));
 };
 
 exports.getAllHospitals = async function(filter, paginator) {

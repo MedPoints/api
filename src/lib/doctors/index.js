@@ -60,8 +60,10 @@ exports.getServicesByDoctorId = async function(id){
 			return [];
 		}
 		const serviceIds = doctor.services || [];
-		const result = await Promise.map(serviceIds, async (serviceId) => servicesDAL.getServiceById(serviceId));
-		return result;
+		return await Promise.map(serviceIds, async (serviceId) => servicesDAL.getServiceById(serviceId));
+	}catch(err){
+		log.error({id}, 'getServicesByDoctorId error', err);
+		throw err;
 	}finally{
 		doctorDAL.close();
 		servicesDAL.close();
@@ -73,12 +75,13 @@ exports.getHospitalsByDoctor = async function({id, service}){
 	try{
 		const filter = {
 			$and: [
-				{services: service},
 				{doctors: id}
 			]
 		};
-		const hospitals = await hospitalDAL.getHospitalsByCustomFilter(filter);
-		return hospitals;
+		if (service) {
+			filter.$and.push({services: service});
+		}
+		return await hospitalDAL.getHospitalsByCustomFilter(filter);
 	}finally{
 		hospitalDAL.close();
 	}
