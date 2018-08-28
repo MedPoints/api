@@ -72,18 +72,18 @@ exports.getServicesByDoctorId = async function(id){
 
 exports.getHospitalsByDoctor = async function({id, service}){
 	const hospitalDAL = await dal.open('hospitals');
+	const serviceDAL = await dal.open('services');
 	try{
-		const filter = {
-			$and: [
-				{doctors: id}
-			]
-		};
-		if (service) {
-			filter.$and.push({services: service});
-		}
-		return await hospitalDAL.getHospitalsByCustomFilter(filter);
+		const filter = {doctors: id};
+		const [hospitals, srv] = await Promise.all([
+			hospitalDAL.getHospitalsByCustomFilter(filter),
+			serviceDAL.getServiceById(service, true),
+		]);
+		const providers = srv.providers && srv.providers.hospitals || [];
+		return hospitals.filter(({id}) => providers.find((p) => p.id === id.toString()) !== undefined);
 	}finally{
 		hospitalDAL.close();
+		serviceDAL.close();
 	}
 };
 
