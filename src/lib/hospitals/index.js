@@ -39,7 +39,7 @@ exports.getHospital = async ({id, name, country, specializationId, service}, pag
         const filter = {};
         if(id){
             const hospital = await hospitalsDal.getHospitalById(id);
-            return getCountOfServicesAndDoctors(hospital);
+            return await getCountOfServicesAndDoctors(hospital);
         }
         if(name){
 	        filter.name = {$regex: name};
