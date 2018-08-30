@@ -15,6 +15,7 @@ const log = require('../../utils/logger').getLogger('DOCTORS');
 exports.getDoctors = async function({name, specialization, service, hospital}, paginator){
     const doctorDAL = await dal.open('doctors');
     const hospitalDAL = await dal.open('hospitals');
+    const servicesDAL = await dal.open('services');
     try{
     	const filter = {};
         if(hospital){
@@ -44,6 +45,17 @@ exports.getDoctors = async function({name, specialization, service, hospital}, p
 	        if(!hospital){
 		        return;
 	        }
+	        doctor.services = await Promise.map(doctor.services, async (serviceId) => {
+		        const service = await servicesDAL.getServiceById(serviceId, true);
+		        if(!service){
+			        return null;
+		        }
+		        return {
+			        name: service.name,
+			        id: service._id.toString(),
+		        };
+	        });
+	        doctor.services = doctor.services.filter((service) => service !== null);
 	        doctor.hospital = {
 		        name: hospital.name,
 		        id: hospital.id,
@@ -57,20 +69,37 @@ exports.getDoctors = async function({name, specialization, service, hospital}, p
     }finally{
         doctorDAL.close();
         hospitalDAL.close();
+	    servicesDAL.close();
     }
 };
 
 exports.getDoctorById = async function(id) {
 	const doctorDAL = await dal.open('doctors');
 	const hospitalDAL = await dal.open('hospitals');
+	const servicesDAL = await dal.open('services');
 	try{
 		const [doctor, [hospital]] = await Promise.all([
 			doctorDAL.getDoctorById(id),
 			hospitalDAL.getAllHospitals({doctors: id}, createPaginator({page: 1, count: 1})),
 		]);
+		if(!doctor.id){
+			return doctor;
+		}
 		if(!hospital){
 			return doctor;
 		}
+		doctor.services = await Promise.map(doctor.services, async (serviceId) => {
+			const service = await servicesDAL.getServiceById(serviceId, true);
+			if(!service){
+				return null;
+			}
+			return {
+				name: service.name,
+				id: service._id.toString(),
+			};
+		});
+		doctor.services = doctor.services.filter((service) => service !== null);
+		
 		doctor.hospital = {
 			id: hospital.id,
 			name: hospital.name,
@@ -83,6 +112,7 @@ exports.getDoctorById = async function(id) {
 	}finally{
 		doctorDAL.close();
 		hospitalDAL.close();
+		servicesDAL.close();
 	}
 };
 
