@@ -1,3 +1,4 @@
+const Promise = require('bluebird');
 const dal = require('../../dal/index');
 const ResponseWithMeta = require("../../routes/responses").ResponseWithMeta;
 
@@ -8,9 +9,8 @@ exports.getDrugs = async ({name, id, groupId, pharmacyId}, paginator) => {
 	const pharmacyDal = await dal.open("pharmacies");
 	try{
 		if(id){
-			let drug = await drugsDal.getDrugById(id, pharmacyId);
-			let pharmaciesByDrug = await pharmacyDal.getAllPharmaciesWithoutPages({ drugs : { id : id}});
-			drug.providers.pharmacies = pharmaciesByDrug;
+			let drug = await drugsDal.getDrugById(id);
+			drug.providers.pharmacies = await pharmacyDal.getCount({drugs: {$in: [drug.id.toString()]}});
 			return drug;
 		}
 		const filter = {};
@@ -22,14 +22,13 @@ exports.getDrugs = async ({name, id, groupId, pharmacyId}, paginator) => {
 
 		if(pharmacyId){
             let pharmacy = await pharmacyDal.getPharmacyById(pharmacyId);
-            filter.ids = pharmacy.drugs.map(x => x.id)
+            filter.ids = pharmacy.drugs.map(x => x);
 		}
 
         const result = await drugsDal.getDrugsWithPages(filter, paginator);
-		for(let drug of result.data){
-            let pharmaciesByDrug = await pharmacyDal.getAllPharmaciesWithoutPages({ drugs : { id : drug.id.toString()}});
-            drug.providers.pharmacies = pharmaciesByDrug;
-        }
+		await Promise.each(result.data, async (drug) => {
+			drug.providers.pharmacies = await pharmacyDal.getCount({drugs: {$in: [drug.id.toString()]}});
+		});
 
 		return new ResponseWithMeta(result);
 	}catch(err){

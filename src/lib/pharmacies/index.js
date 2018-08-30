@@ -14,7 +14,7 @@ exports.getPharmacies = async function({id, name, drugId}, paginator){
 		}
 		let filter = {};
 		if(drugId){
-			filter.drugs = { id : drugId};
+			filter.drugs = drugId;
 		}
 		const result = await pharmaciesDAL.getPharmaciesWithPages(filter, paginator) || {};
 		return new ResponseWithMeta(result)
