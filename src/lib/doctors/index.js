@@ -2,27 +2,24 @@ const Promise = require('bluebird');
 const ObjectId = require('mongodb').ObjectId;
 const dal = require('../../dal/index');
 const {ResponseWithMeta} = require('../../routes/responses');
+const {createPaginator} = require('../../routes/paginator');
 
 const log = require('../../utils/logger').getLogger('DOCTORS');
 
 /**
- * @param {String} id
  * @param {String} name
  * @param {String} specializations
  * @param {Paginator} paginator
  * @returns {Promise<DoctorResponse|Array<DoctorResponse>|Object>}
  */
-exports.getDoctor = async function({id, name, specialization, service, hospital}, paginator){
+exports.getDoctors = async function({name, specialization, service, hospital}, paginator){
     const doctorDAL = await dal.open('doctors');
     const hospitalDAL = await dal.open('hospitals');
     try{
     	const filter = {};
-        if(id){
-            return doctorDAL.getDoctorById(id);
-        }
         if(hospital){
-        	const hosp = await hospitalDAL.getHospitalById(hospital) || {};
-        	if(!hosp){
+        	const hosp = await hospitalDAL.getHospitalById(hospital);
+        	if(!hosp.id){
         		return new ResponseWithMeta({
 			        data: [],
 			        meta: {
@@ -40,8 +37,20 @@ exports.getDoctor = async function({id, name, specialization, service, hospital}
         }else if(service){
         	filter.services = service;
         }
-	    const result = await doctorDAL.getDoctorsWithPages(filter, paginator) || {};
-	    return new ResponseWithMeta(result)
+	    const doctors = await doctorDAL.getDoctorsWithPages(filter, paginator) || {};
+        await Promise.each(doctors.data, async (doctor) => {
+        	const {id} = doctor;
+	        const [hospital] = await hospitalDAL.getAllHospitals({doctors: id.toString()}, createPaginator({page: 1, count: 1}));
+	        if(!hospital){
+		        return;
+	        }
+	        doctor.hospital = {
+		        name: hospital.name,
+		        id: hospital.id,
+		        location: hospital.location,
+	        };
+        });
+	    return new ResponseWithMeta(doctors)
     }catch(err){
         log.error({id, name}, 'getDoctor error', err);
         throw err;
@@ -49,6 +58,32 @@ exports.getDoctor = async function({id, name, specialization, service, hospital}
         doctorDAL.close();
         hospitalDAL.close();
     }
+};
+
+exports.getDoctorById = async function(id) {
+	const doctorDAL = await dal.open('doctors');
+	const hospitalDAL = await dal.open('hospitals');
+	try{
+		const [doctor, [hospital]] = await Promise.all([
+			doctorDAL.getDoctorById(id),
+			hospitalDAL.getAllHospitals({doctors: id}, createPaginator({page: 1, count: 1})),
+		]);
+		if(!hospital){
+			return doctor;
+		}
+		doctor.hospital = {
+			id: hospital.id,
+			name: hospital.name,
+			location: hospital.location,
+		};
+		return doctor;
+	}catch(err){
+		log.error({id, name}, 'getDoctorById error', err);
+		throw err;
+	}finally{
+		doctorDAL.close();
+		hospitalDAL.close();
+	}
 };
 
 exports.getServicesByDoctorId = async function(id){
