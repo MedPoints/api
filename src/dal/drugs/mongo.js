@@ -49,15 +49,16 @@ exports.getDrugsWithPages = async function(filter, paginator) {
         delete filter.ids;
     }
 
-	const [doctors, pages] = await Promise.all([
+	const [doctors, total] = await Promise.all([
 		exports.getAllDrugs(filter, paginator),
 		exports.getCount(filter)
 	]);
 	return {
 		data: doctors,
 		meta: {
-			pages: Math.ceil(pages / paginator.count),
+			pages: Math.ceil(total / paginator.count),
 			current: paginator.page,
+			total,
 		}
 	}
 };

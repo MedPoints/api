@@ -21,14 +21,16 @@ exports.getAllServices = async function(filter, paginator){
 };
 
 exports.getServicesWithPages = async function(filter, paginator) {
-	const [services, pages] = await Promise.all([
+	const [services, total] = await Promise.all([
 		exports.getAllServices(filter, paginator),
 		exports.getCount(filter)
 	]);
 	return {
 		data: services,
 		meta: {
-			pages: Math.ceil(pages / paginator.count)
+			pages: Math.ceil(total / paginator.count),
+			current: paginator.page,
+			total,
 		}
 	}
 };

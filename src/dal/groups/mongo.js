@@ -48,15 +48,16 @@ exports.getCount = async function(filter={}){
 };
 
 exports.getGroupsWithPages = async function(filter, paginator) {
-	const [doctors, pages] = await Promise.all([
+	const [doctors, total] = await Promise.all([
 		exports.getAllCategories(filter, paginator),
 		exports.getCount(filter)
 	]);
 	return {
 		data: doctors,
 		meta: {
-			pages: Math.ceil(pages / paginator.count),
+			pages: Math.ceil(total / paginator.count),
 			current: paginator.page,
+			total,
 		}
 	}
 };

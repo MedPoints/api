@@ -28,14 +28,16 @@ exports.getAllPharmacies = async function(filter, paginator){
 };
 
 exports.getPharmaciesWithPages = async function(filter, paginator) {
-	const [pharmacies, pages] = await Promise.all([
+	const [pharmacies, total] = await Promise.all([
 		exports.getAllPharmacies(filter, paginator),
 		exports.getCount(filter)
 	]);
 	return {
 		data: pharmacies,
 		meta: {
-			pages: Math.ceil(pages / paginator.count)
+			pages: Math.ceil(total / paginator.count),
+			current: paginator.page,
+			total,
 		}
 	}
 };

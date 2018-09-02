@@ -70,38 +70,39 @@ exports.getAllHospitals = async function(filter, paginator) {
 };
 
 exports.getHospitalsWithPages = async function(filter, paginator) {
-    const [hospitals, pages] = await Promise.all([
+    const [hospitals, total] = await Promise.all([
 		exports.getAllHospitals(filter, paginator),
 		exports.getCount(filter)
 	]);
 	return {
 		data: hospitals,
 		meta: {
-			pages: Math.ceil(pages / paginator.count)
+			pages: Math.ceil(total / paginator.count),
+			current: paginator.page,
+			total,
 		}
 	}
 };
 
 exports.getHospitalsGroupedByLocation= async () => {
     const collection = this.mongo.collection(collectionName);
-    const result = await collection.aggregate([
-        {
-            $group: {
-                _id: "$location.country",
-                count: {$sum: 1},
-                hospitals: {
-                    "$push": {
-                        id: {$toString: "$_id"},
-                        name: "$name",
-                        address: "$location.address",
-                        coordinations: "$coordinations"
-                    }
-                }
-            }
-        },
-        {$project: {_id: 0, name: "$_id", count: 1, hospitals: 1}}
+	return await collection.aggregate([
+	    {
+		    $group: {
+			    _id: "$location.country",
+			    count: {$sum: 1},
+			    hospitals: {
+				    "$push": {
+					    id: {$toString: "$_id"},
+					    name: "$name",
+					    address: "$location.address",
+					    coordinations: "$coordinations"
+				    }
+			    }
+		    }
+	    },
+	    {$project: {_id: 0, name: "$_id", count: 1, hospitals: 1}}
     ]).toArray();
-    return result;
 };
 
 exports.getCount = async function(filter={}){
