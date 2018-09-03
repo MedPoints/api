@@ -39,29 +39,6 @@ exports.getDoctors = async function({name, specialization, service, hospital}, p
         	filter.services = service;
         }
 	    const doctors = await doctorDAL.getDoctorsWithPages(filter, paginator) || {};
-        await Promise.each(doctors.data, async (doctor) => {
-        	const {id} = doctor;
-	        const [hospital] = await hospitalDAL.getAllHospitals({doctors: id.toString()}, createPaginator({page: 1, count: 1}));
-	        if(!hospital){
-		        return;
-	        }
-	        doctor.services = await Promise.map(doctor.services, async (serviceId) => {
-		        const service = await servicesDAL.getServiceById(serviceId, true);
-		        if(!service){
-			        return null;
-		        }
-		        return {
-			        name: service.name,
-			        id: service._id.toString(),
-		        };
-	        });
-	        doctor.services = doctor.services.filter((service) => service !== null);
-	        doctor.hospital = {
-		        name: hospital.name,
-		        id: hospital.id,
-		        location: hospital.location,
-	        };
-        });
 	    return new ResponseWithMeta(doctors)
     }catch(err){
         log.error({id, name}, 'getDoctor error', err);
@@ -75,44 +52,13 @@ exports.getDoctors = async function({name, specialization, service, hospital}, p
 
 exports.getDoctorById = async function(id) {
 	const doctorDAL = await dal.open('doctors');
-	const hospitalDAL = await dal.open('hospitals');
-	const servicesDAL = await dal.open('services');
 	try{
-		const [doctor, [hospital]] = await Promise.all([
-			doctorDAL.getDoctorById(id),
-			hospitalDAL.getAllHospitals({doctors: id}, createPaginator({page: 1, count: 1})),
-		]);
-		if(!doctor.id){
-			return doctor;
-		}
-		if(!hospital){
-			return doctor;
-		}
-		doctor.services = await Promise.map(doctor.services, async (serviceId) => {
-			const service = await servicesDAL.getServiceById(serviceId, true);
-			if(!service){
-				return null;
-			}
-			return {
-				name: service.name,
-				id: service._id.toString(),
-			};
-		});
-		doctor.services = doctor.services.filter((service) => service !== null);
-		
-		doctor.hospital = {
-			id: hospital.id,
-			name: hospital.name,
-			location: hospital.location,
-		};
-		return doctor;
+		return await doctorDAL.getDoctorById(id);
 	}catch(err){
 		log.error({id, name}, 'getDoctorById error', err);
 		throw err;
 	}finally{
 		doctorDAL.close();
-		hospitalDAL.close();
-		servicesDAL.close();
 	}
 };
 

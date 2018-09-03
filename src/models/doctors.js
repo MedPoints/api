@@ -23,6 +23,8 @@ class DoctorCreate extends BaseDoctorModel {
 class DoctorResponse extends BaseDoctorModel {
 	constructor(entity) {
 		super(entity);
+		this.hospital = entity.hospital || {};
+		this.coordinations = entity.coordinations || [];
 		this.id = entity._id || entity.id;
 		this.rate = this.ratings.reduce((result, r) => result + r.rate, 0);
 		if (this.ratings.length > 0) {
