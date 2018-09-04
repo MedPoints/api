@@ -1,3 +1,4 @@
+const ObjectId = require('mongodb').ObjectId;
 const Promise = require('bluebird');
 const dal = require('../../dal/index');
 const ResponseWithMeta = require("../../routes/responses").ResponseWithMeta;
@@ -7,7 +8,6 @@ const log = require('../../utils/logger').getLogger('HOSPITALS');
 
 const DOCTORS_DAL_NAME = 'doctors';
 const HOSPITALS_DAL_NAME = 'hospitals';
-const SPECIALIZATION_DAL_NAME = 'specializations';
 
 /**
  *
@@ -53,7 +53,7 @@ exports.getHospital = async ({id, name, country, specializationId, service}, pag
         if(service){
             const s = await serviceDal.getServiceById(service, true);
             let hospitalIds = s.providers && s.providers.hospitals || [];
-        	filter._id = {$in: Array.from(hospitalIds).map(ObjectId)};
+        	filter._id = {$in: hospitalIds.map(hospital => new ObjectId(hospital.id))};
         }
         const result = await hospitalsDal.getHospitalsWithPages(filter, paginator) || {};
 	    result.data = await Promise.map(result.data, getCountOfServicesAndDoctors);
