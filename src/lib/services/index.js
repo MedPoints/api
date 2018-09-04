@@ -23,10 +23,10 @@ exports.getServices = async function({id, name, hospital, doctor}, paginator){
 			const services = new Set();
 			for(const doctor of doctors){
 				for(const service of doctor.services){
-					services.add(service);
+					services.add(service.id);
 				}
 			}
-			filter._id = {$in: Array.from(services).map(ObjectId)};
+			filter._id = {$in: Array.from(services).map(id => new ObjectId(id))};
 		}
 		const result = await servicesDAL.getServicesWithPages(filter, paginator) || {};
 		return new ResponseWithMeta(result)
