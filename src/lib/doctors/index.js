@@ -70,8 +70,8 @@ exports.getServicesByDoctorId = async function(id){
 		if(!doctor){
 			return [];
 		}
-		const serviceIds = doctor.services || [];
-		return await Promise.map(serviceIds, async (serviceId) => servicesDAL.getServiceById(serviceId));
+		const services = doctor.services || [];
+		return await Promise.map(services, async (service) => servicesDAL.getServiceById(service.id));
 	}catch(err){
 		log.error({id}, 'getServicesByDoctorId error', err);
 		throw err;
@@ -90,7 +90,7 @@ exports.getHospitalsByDoctor = async function({id, service}){
 			hospitalDAL.getHospitalsByCustomFilter(filter),
 			serviceDAL.getServiceById(service, true),
 		]);
-		const providers = srv.providers && srv.providers.hospitals || [];
+		const providers = srv && srv.providers && srv.providers.hospitals || [];
 		return hospitals.filter(({id}) => providers.find((p) => p.id === id.toString()) !== undefined);
 	}finally{
 		hospitalDAL.close();

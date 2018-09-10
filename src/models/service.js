@@ -25,10 +25,6 @@ class ServiceResponse extends BaseServiceModel {
 	constructor(entity) {
 		super(entity);
 		this.id = entity.id || entity._id;
-		this.providers = Object.keys(this.providers).reduce((result, key) => {
-			result[key] = this.providers[key].length;
-			return result;
-		}, {});
 	}
 }
 

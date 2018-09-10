@@ -1,3 +1,4 @@
+const Promise = require('bluebird');
 const ObjectId = require('mongodb').ObjectId;
 
 const dal = require('../../dal/index');
@@ -19,7 +20,7 @@ exports.getServices = async function({id, name, hospital, doctor}, paginator){
 		const filter = {};
 		if(hospital){
 			const h = await hospitalDAL.getHospitalById(hospital);
-			const doctors = await doctorsDAL.getDoctors({_id: {$in: h.doctors.map(ObjectId)}}, null);
+			const doctors = await doctorsDAL.getDoctors({_id: {$in: h.doctors.map(doctor => new ObjectId(doctor))}}, null);
 			const services = new Set();
 			for(const doctor of doctors){
 				for(const service of doctor.services){
@@ -29,6 +30,13 @@ exports.getServices = async function({id, name, hospital, doctor}, paginator){
 			filter._id = {$in: Array.from(services).map(id => new ObjectId(id))};
 		}
 		const result = await servicesDAL.getServicesWithPages(filter, paginator) || {};
+		if (!(result && result.data && result.data.length > 0)) {
+			return new ResponseWithMeta(result);
+		}
+		await Promise.each(result.data, async (service) => {
+			const doctors = await doctorsDAL.getDoctors({services: service.id.toString()});
+			service.providers.doctors = doctors;
+		});
 		return new ResponseWithMeta(result)
 	}catch(err){
 		log.error({id, name}, 'getServices error', err);
