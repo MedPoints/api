@@ -6,7 +6,7 @@ const crypto = require('crypto');
 const User = require('../../models/user');
 
 const dal = require('../../dal/index');
-const notifications = require('../../notifications/index');
+const notifications = require('../../notifications/events');
 
 exports.register = async ({publicKey, privateKey, firstName, lastName, email}) => {
 	const authDAL = await dal.open('auth');
@@ -22,21 +22,13 @@ exports.register = async ({publicKey, privateKey, firstName, lastName, email}) =
 			await authDAL.deleteUserById(id);
 		}
 		const user = {
-			_id: id,
-			publicKey,
-			privateKey,
-			confirmationToken,
-			confirmed: false,
-			firstName,
-			lastName,
-			email,
+			_id: id, publicKey, privateKey, confirmationToken, confirmed: false, firstName, lastName, email,
 		};
 		await authDAL.register(user);
-		await notifications.sendConfirmMessage({
+		notifications.raise('registration', email, {
 			token: base64ConfirmationToken,
 			firstName,
 			lastName,
-			email,
 		});
 		return new User(user);
 	}finally{
