@@ -20,7 +20,7 @@ class EmailNotification extends BaseNotification {
 			from: `"MedPoints" <${this.config.auth.user}>`,
 			to,
 			subject,
-			text: message,
+			html: message,
 		});
 	}
 }
