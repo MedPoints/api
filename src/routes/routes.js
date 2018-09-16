@@ -13,7 +13,8 @@ const routes = [
 	require('./services'),
 	require('./group'),
 	require('./specializations'),
-	require('./maintenance')
+	require('./maintenance'),
+	require('./auth'),
 ];
 
 const PREFIX = '/api';

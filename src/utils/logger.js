@@ -15,7 +15,6 @@ exports.getLogger = (name) => {
 	}
 	const loggerOptions = {
 		name: name,
-		level: logSettings.level,
 	};
 	const logger = bunyan.createLogger(loggerOptions);
 	loggers[name] = logger;
