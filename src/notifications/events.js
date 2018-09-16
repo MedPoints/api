@@ -18,11 +18,11 @@ class NotificationEvents{
 	
 	_initEvents(){
 		const {emitter} = this;
-		function onEvent(template, messageFormatter) {
+		function onEvent(tmp, messageFormatter) {
 			return async ({destination, data}) => {
 				const input = messageFormatter(data);
 				const template = await render({
-					template: template,
+					template: tmp,
 					data: input
 				});
 				await backends.email.send({
