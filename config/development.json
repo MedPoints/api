@@ -14,7 +14,7 @@
   "notifications": {
     "email": {
       "host": "smtp.yandex.ru",
-      "port": 465,
+      "port": 587,
       "auth": {
         "user": "medpoints.online@yandex.ru",
         "pass": "Fg34$dCvSaPr#1"

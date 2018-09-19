@@ -10,7 +10,7 @@ class EmailNotification extends BaseNotification {
 		this.transporter = nodemailer.createTransport({
 			host: this.config.host,
 			port: this.config.port,
-			secure: true,
+			secure: false,
 			auth: this.config.auth,
 		});
 	}
