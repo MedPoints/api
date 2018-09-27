@@ -2,7 +2,7 @@
 
 const {EventEmitter} = require('events');
 const {render} = require('./renderer');
-const {registration} = require('./formatters');
+const {registration, ticket} = require('./formatters');
 const backends = require('./backends/index');
 
 class NotificationEvents{
@@ -33,6 +33,7 @@ class NotificationEvents{
 			};
 		}
 		emitter.on('registration', onEvent('registration', registration));
+		emitter.on('ticket', onEvent('ticket', ticket));
 	}
 }
 

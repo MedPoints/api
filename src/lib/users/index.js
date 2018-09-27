@@ -1,7 +1,7 @@
 'use strict';
 
 const uuid = require('uuid/v4');
-const crypto = require('crypto');
+const utils = require('../utils');
 
 const User = require('../../models/user');
 
@@ -13,7 +13,7 @@ exports.register = async ({publicKey, privateKey, firstName, lastName, email}) =
 	try{
 		const confirmationToken = uuid();
 		const base64ConfirmationToken = Buffer.from(confirmationToken).toString('base64');
-		const id = createId(publicKey, privateKey);
+		const id = utils.createUserId(publicKey, privateKey);
 		const existedUser = await authDAL.getUserById(id);
 		if(existedUser){
 			if(existedUser.confirmed){
@@ -57,7 +57,7 @@ exports.confirm = async({token}) => {
 exports.auth = async ({publicKey, privateKey}) => {
 	const authDAL = await dal.open('auth');
 	try{
-		const id = createId(publicKey, privateKey);
+		const id = utils.createUserId(publicKey, privateKey);
 		const user = await authDAL.getUserById(id);
 		if(!user){
 			throw new Error('USER_NOT_EXIST');
@@ -70,8 +70,3 @@ exports.auth = async ({publicKey, privateKey}) => {
 		authDAL.close();
 	}
 };
-
-function createId(publicKey, privateKey){
-	const id = `${publicKey}:${privateKey}`;
-	return crypto.createHash('sha256').update(id).digest('hex');
-}

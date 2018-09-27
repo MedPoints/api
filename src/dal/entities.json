@@ -22,5 +22,8 @@
   },
   "specializations": {
     "mongo": true
+  },
+  "tickets": {
+    "mongo": true
   }
 }

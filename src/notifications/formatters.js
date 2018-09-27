@@ -8,3 +8,7 @@ exports.registration = function({token, firstName, lastName}){
 		link,
 	};
 };
+
+exports.ticket = function(ticket){
+	return ticket;
+};
