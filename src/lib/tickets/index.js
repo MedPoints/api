@@ -23,7 +23,11 @@ exports.createTicket = async (ticket) => {
 		}
 		const {email: userEmail} = user;
  		const email = config.get('adminEmail');
-		await ticketDal.createTicket(Object.assign({}, ticket, {_id: id}));
+		await ticketDal.createTicket(Object.assign({}, ticket, {
+			_id: id,
+			dateCreated: new Date(),
+			status: 'open',
+		}));
 		notifications.raise('ticket', email, {
 			userEmail,
 			title: ticket,
@@ -33,6 +37,16 @@ exports.createTicket = async (ticket) => {
 		return {status: 'OK'};
 	}finally{
 		authDal.close();
+		ticketDal.close();
+	}
+};
+
+exports.getTicketsByUser = async ({publicKey, privateKey}) => {
+	const ticketDal = await dal.open('tickets');
+	try{
+		const userId = utils.createUserId(ticket.publicKey, ticket.privateKey);
+		return await ticketDal.getUserById(userId);
+	}finally{
 		ticketDal.close();
 	}
 };

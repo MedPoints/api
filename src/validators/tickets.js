@@ -1,11 +1,13 @@
 'use strict';
 
-const Promise = require('bluebird');
 const Joi = require('joi');
 
-const validate = Promise.promisify(Joi.validate, {context: Joi});
-
 const log = require('../utils/logger').getLogger('VALIDATION');
+
+const GetTicketsByUserSchema = {
+	publicKey: Joi.string().required(),
+	privateKey: Joi.string().required(),
+};
 
 const CreateTicketSchema = Joi.object({
 	publicKey: Joi.string().required(),
@@ -17,7 +19,17 @@ const CreateTicketSchema = Joi.object({
 
 exports.createTicketValidator = async (req, res, next) => {
 	try{
-		await validate(req.body, CreateTicketSchema);
+		await CreateTicketSchema.validate(req.body);
+		next();
+	}catch(err){
+		log.error('validation error', err);
+		next(err);
+	}
+};
+
+exports.getTicketsByUser = async (req, res, next) => {
+	try{
+		await GetTicketsByUserSchema.validate(req.params);
 		next();
 	}catch(err){
 		log.error('validation error', err);
