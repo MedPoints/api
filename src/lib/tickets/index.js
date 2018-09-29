@@ -14,7 +14,7 @@ const notifications = require('../../notifications/events');
  * @returns {Promise<Object>}
  */
 exports.createTicket = async (ticket) => {
-	const [ticketDal, authDal] = Promise.all([
+	const [ticketDal, authDal] = await Promise.all([
 		dal.open('tickets'),
 		dal.open('auth')
 	]);
@@ -46,7 +46,7 @@ exports.createTicket = async (ticket) => {
 };
 
 /**
- * @param {String} publicKey 
+ * @param {String} publicKey
  * @param {String} privateKey
  */
 exports.getTicketsByUser = async ({publicKey, privateKey}) => {
