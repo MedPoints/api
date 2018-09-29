@@ -1,3 +1,5 @@
+'use strict';
+
 const path = require('path');
 const express = require('express');
 const bodyParser = require('body-parser');
@@ -16,6 +18,7 @@ const routes = [
 	require('./maintenance'),
 	require('./auth'),
 	require('./tickets'),
+	require('./faq'),
 ];
 
 const PREFIX = '/api';

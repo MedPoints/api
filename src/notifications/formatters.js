@@ -12,3 +12,7 @@ exports.registration = function({token, firstName, lastName}){
 exports.ticket = function(ticket){
 	return ticket;
 };
+
+exports.question = function(question){
+	return question;
+}

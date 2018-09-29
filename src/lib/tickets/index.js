@@ -9,6 +9,10 @@ const utils = require('../utils');
 const dal = require('../../dal/index');
 const notifications = require('../../notifications/events');
 
+/**
+ * @param {Object} ticket
+ * @returns {Promise<Object>}
+ */
 exports.createTicket = async (ticket) => {
 	const [ticketDal, authDal] = Promise.all([
 		dal.open('tickets'),
@@ -41,10 +45,14 @@ exports.createTicket = async (ticket) => {
 	}
 };
 
+/**
+ * @param {String} publicKey 
+ * @param {String} privateKey
+ */
 exports.getTicketsByUser = async ({publicKey, privateKey}) => {
 	const ticketDal = await dal.open('tickets');
 	try{
-		const userId = utils.createUserId(ticket.publicKey, ticket.privateKey);
+		const userId = utils.createUserId(publicKey, privateKey);
 		return await ticketDal.getUserById(userId);
 	}finally{
 		ticketDal.close();
