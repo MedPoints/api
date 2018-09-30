@@ -31,6 +31,7 @@ exports.createTicket = async (ticket) => {
 			_id: id,
 			dateCreated: new Date(),
 			status: 'open',
+			userId,
 		}));
 		notifications.raise('ticket', email, {
 			userEmail,
@@ -53,7 +54,7 @@ exports.getTicketsByUser = async ({publicKey, privateKey}) => {
 	const ticketDal = await dal.open('tickets');
 	try{
 		const userId = utils.createUserId(publicKey, privateKey);
-		return await ticketDal.getUserById(userId);
+		return await ticketDal.getTicketsByUser(userId);
 	}finally{
 		ticketDal.close();
 	}
