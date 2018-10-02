@@ -70,3 +70,21 @@ exports.auth = async ({publicKey, privateKey}) => {
 		authDAL.close();
 	}
 };
+
+exports.updateProfile = async (profile) => {
+	const authDAL = await dal.open('auth');
+	try{
+		const id = utils.createUserId(profile.publicKey, profile.privateKey);
+		const user = await authDAL.getUserById(id);
+		if(!user){
+			throw new Error('USER_NOT_EXIST');
+		}
+		if(!user.confirmed){
+			throw new Error('USER_NOT_CONFIRMED');
+		}
+		await authDAL.updateUser(id, profile);
+		return 'OK';
+	}finally{
+		authDAL.close();
+	}
+};

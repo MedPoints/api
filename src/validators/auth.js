@@ -7,7 +7,7 @@ const validate = Promise.promisify(Joi.validate, {context: Joi});
 
 const log = require('../utils/logger').getLogger('VALIDATION');
 
-const RegisterSchema = Joi.object({
+const UserSchema = Joi.object({
 	publicKey: Joi.string().required(),
 	privateKey: Joi.string().required(),
 	email: Joi.string().email({minDomainAtoms: 2}).optional(),
@@ -26,7 +26,7 @@ const ConfirmSchema = Joi.object({
 
 exports.registerValidator = async (req, res, next) => {
 	try{
-		await validate(req.body, RegisterSchema);
+		await validate(req.body, UserSchema);
 		next();
 	}catch(err){
 		log.error('validation error', err);
@@ -47,6 +47,16 @@ exports.authValidator = async (req, res, next) => {
 exports.confirmValidator = async (req, res, next) => {
 	try{
 		await validate(req.query, ConfirmSchema);
+		next();
+	}catch(err){
+		log.error('validation error', err);
+		next(err);
+	}
+};
+
+exports.updateProfileValidator = async (req, res, next) => {
+	try{
+		await validate(req.body, UserSchema);
 		next();
 	}catch(err){
 		log.error('validation error', err);

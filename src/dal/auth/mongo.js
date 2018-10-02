@@ -28,3 +28,8 @@ exports.confirmUser = async function(id){
 	const collection = this.mongo.collection(collectionName);
 	await collection.update({_id: id}, {$set: {confirmed: true}});
 };
+
+exports.updateUser = async function(id, profile){
+	const collection = this.mongo.collection(collectionName);
+	await collection.update({_id: id}, profile, {upsert: false});
+};

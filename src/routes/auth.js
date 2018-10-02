@@ -1,3 +1,5 @@
+'use strict';
+
 const {Router} = require('express');
 
 const users = require('../lib/users/index');
@@ -28,6 +30,15 @@ router.get('/confirm', validator.confirmValidator, async (req, res, next) => {
 router.post('/auth', validator.authValidator, async (req, res, next) => {
 	try{
 		res.result = await users.auth(req.body);
+		next();
+	}catch(err){
+		next(err);
+	}
+});
+
+router.put('/update', validator.updateProfileValidator, async (req, res, next) => {
+	try{
+		res.result = await users.updateProfile(req.body);
 		next();
 	}catch(err){
 		next(err);
