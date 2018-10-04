@@ -15,6 +15,7 @@ const UserSchema = Joi.object({
 	email: Joi.string().email({minDomainAtoms: 2}).optional(),
 	firstName: Joi.string().optional(),
 	lastName: Joi.string().optional(),
+	gender: Joi.string().optional(),
 });
 
 const AuthSchema = Joi.object({
