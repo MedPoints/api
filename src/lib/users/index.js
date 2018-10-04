@@ -88,3 +88,13 @@ exports.updateProfile = async (profile) => {
 		authDAL.close();
 	}
 };
+
+exports.getUserInfo = async ({publicKey, privateKey}) => {
+	const authDAL = await dal.open('auth');
+	try{
+		const id = utils.createUserId(publicKey, privateKey);
+		return await authDAL.getUserById(id);
+	}finally{
+		authDAL.close();
+	}
+};
