@@ -47,7 +47,11 @@ exports.initServer = ({log}) => {
 		next();
 	});
 	app.use((err, req, res, next) => {
-		res.status(500).json({error: err.message});
+		let statusCode = 500;
+		if(err.name === 'ValidationError'){
+			statusCode = 422;
+		}
+		res.status(statusCode).json({error: err.message});
 		next();
 	});
 	return app;
