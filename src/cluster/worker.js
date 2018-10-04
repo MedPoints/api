@@ -1,16 +1,17 @@
+'use strict';
+
 const routes = require('../routes/routes');
 const {BaseWorker} = require('./baseworker');
 const DAL = require('../dal/index');
 
 
-class Worker extends BaseWorker{
+class Worker extends BaseWorker {
 	/**
 	 * @param {Object} options
 	 * @param {Logger} options.logger
 	 */
 	constructor(options={}){
 		super(options);
-		this._logger = options.logger;
 	}
 
 	/**
@@ -18,9 +19,15 @@ class Worker extends BaseWorker{
 	 * @param {Number|String} [config.port]
 	 */
 	init(config){
+		const {_logger: log} = this;
 		DAL.initDAL();
-		routes.initServer({log: this._logger}).listen(config.port, '0.0.0.0', () =>{
-			this._logger.info({port: config.port}, 'start server');
+		const app = routes.initServer({log: this._logger});
+		const server = app.listen(config.port, '0.0.0.0', () => {
+			log.info({port: config.port}, 'start server');
+		});
+		this._onClose.push(async () => {
+			await server.close();
+			log.info('server connection closed');
 		});
 	}
 }

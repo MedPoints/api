@@ -8,13 +8,6 @@ const settings = config.get('server');
 const logger = require('../utils/logger').getLogger('WORKER');
 
 exports.startServer = () => {
-	process.on('uncaughtException', (ex) => {
-		logger.error('uncaughtException', ex.stack || ex);
-	});
-	process.on('unhandledRejection', (rejection) => {
-		logger.error(rejection, 'unhandledRejection');
-	});
-	
 	let worker;
 	if(cluster.isMaster){
 		worker = new Master({logger: logger});

@@ -18,7 +18,7 @@ class Master extends BaseWorker {
 	 * @param {Number} [config.maxProcess]
 	 */
 	init(config){
-		this._logger.debug('init main worker');
+		this._logger.info('init main worker');
 		const workers = config.maxProcess || os.cpus().length;
 		for(let i = 0; i < workers; i++){
 			this._createWorkers();
