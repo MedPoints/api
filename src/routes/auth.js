@@ -8,7 +8,7 @@ const validator = require('../validators/auth');
 
 const router = new Router();
 
-router.get('/:publicKey/:privateKey', validator.authValidator, async (req, res, next) => {
+router.get('/:publicKey/:privateKey', validator.getUserInfo, async (req, res, next) => {
 	try{
 		res.result = await users.getUserInfo(req.params);
 		next();
