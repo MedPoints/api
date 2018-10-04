@@ -93,7 +93,8 @@ exports.getUserInfo = async ({publicKey, privateKey}) => {
 	const authDAL = await dal.open('auth');
 	try{
 		const id = utils.createUserId(publicKey, privateKey);
-		return await authDAL.getUserById(id);
+		const user = await authDAL.getUserById(id);
+		return new User(user);
 	}finally{
 		authDAL.close();
 	}
