@@ -82,7 +82,7 @@ exports.updateProfile = async (profile) => {
 		if(!user.confirmed){
 			throw new Error('USER_NOT_CONFIRMED');
 		}
-		await authDAL.updateUser(id, profile);
+		await authDAL.updateUser(id, Object.assign({}, user, profile));
 		return 'OK';
 	}finally{
 		authDAL.close();
