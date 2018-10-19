@@ -16,9 +16,10 @@ const HOSPITALS_DAL_NAME = 'hospitals';
  * @param {String} country
  * @param {String} specializationId
  * @param {String} service
+ * @param {Object} filter
  * @returns {Promise<ResponseWithMeta>}
  */
-exports.getHospital = async ({id, name, country, specializationId, service}, paginator) => {
+exports.getHospital = async ({id, name, country, specializationId, service, filter}, paginator) => {
     const hospitalsDal = await dal.open(HOSPITALS_DAL_NAME);
     const doctorsDal = await dal.open(DOCTORS_DAL_NAME);
     const serviceDal = await dal.open('services');
@@ -36,26 +37,31 @@ exports.getHospital = async ({id, name, country, specializationId, service}, pag
 		return hospital;
 	};
     try{
-        const filter = {};
+        const query = {};
         if(id){
             const hospital = await hospitalsDal.getHospitalById(id);
             return await getCountOfServicesAndDoctors(hospital);
         }
         if(name){
-	        filter.name = {$regex: name};
+	        query.name = {$regex: name};
         }
         if(country){
-            filter["location.country"] = country;
+            query['location.country'] = country;
         }
         if(specializationId){
-            filter["specializations.id"] = { $eq: specializationId};
+            query['specializations.id'] = { $eq: specializationId};
+        }
+        if(filter){
+            if(filter.city && filter.city !== 'worldwide'){
+	            query['location.city'] = filter.city;
+            }
         }
         if(service){
             const s = await serviceDal.getServiceById(service, true);
             let hospitalIds = s.providers && s.providers.hospitals || [];
-        	filter._id = {$in: hospitalIds.map(hospital => new ObjectId(hospital.id))};
+        	query._id = {$in: hospitalIds.map(hospital => new ObjectId(hospital.id))};
         }
-        const result = await hospitalsDal.getHospitalsWithPages(filter, paginator) || {};
+        const result = await hospitalsDal.getHospitalsWithPages(query, paginator) || {};
 	    result.data = await Promise.map(result.data, getCountOfServicesAndDoctors);
         return new ResponseWithMeta(result);
     }catch(err){
