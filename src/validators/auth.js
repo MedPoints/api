@@ -26,6 +26,11 @@ const ConfirmSchema = Joi.object({
 	token: Joi.string().required()
 });
 
+const FavoriteSchema = Joi.object({
+	id: Joi.string().required(),
+	type: Joi.string().required(),
+});
+
 exports.registerValidator = async (req, res, next) => {
 	try{
 		await validate(req.body, UserSchema);
@@ -69,6 +74,16 @@ exports.confirmValidator = async (req, res, next) => {
 exports.updateProfileValidator = async (req, res, next) => {
 	try{
 		await validate(req.body, UserSchema);
+		next();
+	}catch(err){
+		log.error('validation error', err);
+		next(err);
+	}
+};
+
+exports.addToFavorites = async (req, res, next) => {
+	try{
+		await validate(req.body, FavoriteSchema);
 		next();
 	}catch(err){
 		log.error('validation error', err);

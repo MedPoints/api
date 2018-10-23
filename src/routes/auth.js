@@ -53,5 +53,14 @@ router.put('/update', validator.updateProfileValidator, async (req, res, next) =
 	}
 });
 
+router.post('/:publicKey/:privateKey/favorites', validator.addToFavorites, async (req, res, next) => {
+	try{
+		res.result = await users.addToFavorites(req.params, req.body);
+		next();
+	}catch(err){
+		next(err);
+	}
+});
+
 exports.module = router;
 exports.name = 'users';

@@ -33,3 +33,14 @@ exports.updateUser = async function(id, profile){
 	const collection = this.mongo.collection(collectionName);
 	await collection.update({_id: id}, profile, {upsert: false});
 };
+
+exports.addFavorite = async function(id, favorite){
+	const collection = this.mongo.collection(collectionName);
+	await collection.update({
+		_id: id
+	}, {
+		$push: {
+			favorites: favorite
+		}
+	});
+};

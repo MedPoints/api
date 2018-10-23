@@ -99,3 +99,14 @@ exports.getUserInfo = async ({publicKey, privateKey}) => {
 		authDAL.close();
 	}
 };
+
+exports.addToFavorites = async ({publicKey, privateKey}, favorite) => {
+	const authDAL = await dal.open('auth');
+	try{
+		const userId = utils.createUserId(publicKey, privateKey);
+		await authDAL.addFavorite(userId, favorite);
+		return 'OK';
+	}finally{
+		authDAL.close();
+	}
+};
