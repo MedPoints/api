@@ -19,7 +19,7 @@ exports.getDrugs = async ({name, id, groupId, pharmacyId, filter}, paginator) =>
 		if (groupId) {
 			query['group.id'] =  groupId;
 		}else if(name) {
-			query.name = name;
+			query.name = {$regex: name};
 		}
 
 		if(pharmacyId){
