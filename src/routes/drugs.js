@@ -1,3 +1,5 @@
+'use strict';
+
 const {Router} = require('express');
 
 const drugs = require('../lib/drugs/index');
@@ -5,10 +7,10 @@ const drugs = require('../lib/drugs/index');
 const router = new Router();
 
 router.get('/', async (req, res, next) => {
-	const {id, name, groupId, pharmacyId} = req.query;
+	const {id, name, groupId, pharmacyId, filter} = req.query;
 	const paginator = req.paginator;
 	try{
-		res.result = await drugs.getDrugs({name, id, groupId, pharmacyId}, paginator);
+		res.result = await drugs.getDrugs({name, id, groupId, pharmacyId, filter}, paginator);
 		next();
 	}catch(err){
 		next(err);

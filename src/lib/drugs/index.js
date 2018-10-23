@@ -1,10 +1,12 @@
+'use strict';
+
 const Promise = require('bluebird');
 const dal = require('../../dal/index');
 const ResponseWithMeta = require("../../routes/responses").ResponseWithMeta;
 
 const log = require('../../utils/logger').getLogger('DRUGS');
 
-exports.getDrugs = async ({name, id, groupId, pharmacyId}, paginator) => {
+exports.getDrugs = async ({name, id, groupId, pharmacyId, filter}, paginator) => {
 	const drugsDal = await dal.open('drugs');
 	const pharmacyDal = await dal.open("pharmacies");
 	try{
@@ -13,19 +15,38 @@ exports.getDrugs = async ({name, id, groupId, pharmacyId}, paginator) => {
 			drug.providers.pharmacies = await pharmacyDal.getCount({drugs: {$in: [drug.id.toString()]}});
 			return drug;
 		}
-		const filter = {};
+		const query = {};
 		if (groupId) {
-			filter['group.id'] =  groupId;
+			query['group.id'] =  groupId;
 		}else if(name) {
-			filter.name = name;
+			query.name = name;
 		}
 
 		if(pharmacyId){
-            let pharmacy = await pharmacyDal.getPharmacyById(pharmacyId);
-            filter.ids = pharmacy.drugs.map(x => x);
+            const pharmacy = await pharmacyDal.getPharmacyById(pharmacyId);
+            query.ids = pharmacy.drugs.map(x => x);
+		}
+		
+		if(filter){
+			if(filter.insurance){
+				query['is_covered_by_insurance'] = filter.insurance === 'on';
+			}
+			if(filter.prescription){
+				query['is_by_prescription'] = filter.prescription === 'on';
+			}
+			if(filter.maxPrice){
+				const maxPrice = Number(filter.maxPrice);
+				query['price.mpts'] = {$lte: maxPrice};
+			}
+			if(filter.city && filter.city !== 'worldwide'){
+				const pharmQuery = {};
+				pharmQuery['location.city'] = filter.city;
+				const pharmacies = await pharmacyDal.getAllPharmaciesWithoutPages(pharmQuery);
+				query.ids = pharmacies.map().drugs.map(x => x);
+			}
 		}
 
-        const result = await drugsDal.getDrugsWithPages(filter, paginator);
+        const result = await drugsDal.getDrugsWithPages(query, paginator);
 		await Promise.each(result.data, async (drug) => {
 			drug.providers.pharmacies = await pharmacyDal.getCount({drugs: {$in: [drug.id.toString()]}});
 		});
