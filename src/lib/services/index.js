@@ -7,7 +7,7 @@ const {ResponseWithMeta} = require('../../routes/responses');
 const log = require('../../utils/logger').getLogger('SERVICES');
 
 
-exports.getServices = async function({id, name, hospital, doctor}, paginator){
+exports.getServices = async function({id, name, hospital, doctor, filter}, paginator){
 	const servicesDAL = await dal.open('services');
 	const doctorsDAL = await dal.open('doctors');
 	const hospitalDAL = await dal.open('hospitals');
@@ -17,7 +17,7 @@ exports.getServices = async function({id, name, hospital, doctor}, paginator){
 		}else if(name){
 			return servicesDAL.getServiceByName(name);
 		}
-		const filter = {};
+		const query = {};
 		if(hospital){
 			const h = await hospitalDAL.getHospitalById(hospital);
 			const doctors = await doctorsDAL.getDoctors({_id: {$in: h.doctors.map(doctor => new ObjectId(doctor))}}, null);
@@ -27,9 +27,42 @@ exports.getServices = async function({id, name, hospital, doctor}, paginator){
 					services.add(service.id);
 				}
 			}
-			filter._id = {$in: Array.from(services).map(id => new ObjectId(id))};
+			query._id = {$in: Array.from(services).map(id => new ObjectId(id))};
+		}else if(filter){
+			if(filter.city && filter.city !== 'worldwide'){
+				const hospFilter = {};
+				hospFilter['location.city'] = filter.city;
+				const hospitals = await hospitalDAL.getHospitalsByCustomFilter(hospFilter) || [];
+				if(hospitals.length === 0){
+					return new ResponseWithMeta({
+						data: [],
+						meta: {
+							pages: 0,
+							current: paginator.page,
+						}
+					});
+				}
+				const doctorIds = hospitals.reduce((total, {doctors}) => {
+					total.push(...doctors.map(doctor => new ObjectId(doctor)));
+				}, []);
+				const doctors = await doctorsDAL.getDoctors({_id: {$in: doctorIds}}, null);
+				const services = new Set();
+				for(const doctor of doctors){
+					for(const service of doctor.services){
+						services.add(service.id);
+					}
+				}
+				query._id = {$in: Array.from(services).map(id => new ObjectId(id))};
+			}
+			if(filter.insurance){
+				query['is_covered_by_insurance'] = filter.insurance === 'on';
+			}
+			if(filter.maxPrice){
+				const maxPrice = Number(filter.maxPrice);
+				query['price.mpts'] = {$lte: maxPrice};
+			}
 		}
-		const result = await servicesDAL.getServicesWithPages(filter, paginator) || {};
+		const result = await servicesDAL.getServicesWithPages(query, paginator) || {};
 		if (!(result && result.data && result.data.length > 0)) {
 			return new ResponseWithMeta(result);
 		}
