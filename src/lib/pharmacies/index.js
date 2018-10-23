@@ -1,10 +1,12 @@
+'use strict';
+
 const dal = require('../../dal/index');
 const {ResponseWithMeta} = require('../../routes/responses');
 
 const log = require('../../utils/logger').getLogger('PHARMACIES');
 
 
-exports.getPharmacies = async function({id, name, drugId}, paginator){
+exports.getPharmacies = async function({id, name, drugId, filter}, paginator){
 	const pharmaciesDAL = await dal.open('pharmacies');
 	try{
 		if(id){
@@ -12,11 +14,16 @@ exports.getPharmacies = async function({id, name, drugId}, paginator){
 		}else if(name){
 			return pharmaciesDAL.getPharmacyByName(name);
 		}
-		let filter = {};
+		let query = {};
 		if(drugId){
-			filter.drugs = drugId;
+			query.drugs = drugId;
 		}
-		const result = await pharmaciesDAL.getPharmaciesWithPages(filter, paginator) || {};
+		if(filter){
+			if(filter.city && filter.city !== 'worldwide'){
+				query['location.city'] = filter.city;
+			}
+		}
+		const result = await pharmaciesDAL.getPharmaciesWithPages(query, paginator) || {};
 		return new ResponseWithMeta(result)
 	}catch(err){
 		log.error({id, name}, 'getPharmacies error', err);
