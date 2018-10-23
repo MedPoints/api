@@ -28,7 +28,7 @@ exports.getDoctors = async function({name, specialization, service, hospital, fi
 			        }
 		        });
 	        }
-        	query._id = {$in: hosp.doctors.map(ObjectId)};
+        	query._id = {$in: hosp.doctors.map(id => new ObjectId(id))};
         }
         else if(name){
         	query.name = {$regex: name};
