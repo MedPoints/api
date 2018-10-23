@@ -2,7 +2,6 @@ const Promise = require('bluebird');
 const ObjectId = require('mongodb').ObjectId;
 const dal = require('../../dal/index');
 const {ResponseWithMeta} = require('../../routes/responses');
-const {createPaginator} = require('../../routes/paginator');
 
 const log = require('../../utils/logger').getLogger('DOCTORS');
 
@@ -12,12 +11,12 @@ const log = require('../../utils/logger').getLogger('DOCTORS');
  * @param {Paginator} paginator
  * @returns {Promise<DoctorResponse|Array<DoctorResponse>|Object>}
  */
-exports.getDoctors = async function({name, specialization, service, hospital}, paginator){
+exports.getDoctors = async function({name, specialization, service, hospital, filter}, paginator){
     const doctorDAL = await dal.open('doctors');
     const hospitalDAL = await dal.open('hospitals');
     const servicesDAL = await dal.open('services');
     try{
-    	const filter = {};
+    	const query = {};
         if(hospital){
         	const hosp = await hospitalDAL.getHospitalById(hospital);
         	if(!hosp.id){
@@ -29,16 +28,35 @@ exports.getDoctors = async function({name, specialization, service, hospital}, p
 			        }
 		        });
 	        }
-        	filter._id = {$in: hosp.doctors.map(ObjectId)};
+        	query._id = {$in: hosp.doctors.map(ObjectId)};
         }
         else if(name){
-        	filter.name = {$regex: name};
+        	query.name = {$regex: name};
         }else if(specialization){
-        	filter.specialization = specialization;
+        	query.specialization = specialization;
         }else if(service){
-        	filter.services = service;
+        	query.services = service;
+        }else if(filter && filter.city && filter.city !== 'worldwide'){
+        	const hospFilter = {};
+        	hospFilter['location.city'] = filter.city;
+        	const hospitals = await hospitalDAL.getHospitalsByCustomFilter(hospFilter) || [];
+	        if(hospitals.length === 0){
+		        return new ResponseWithMeta({
+			        data: [],
+			        meta: {
+				        pages: 0,
+				        current: paginator.page,
+			        }
+		        });
+	        }
+	        query._id = {
+	        	$in: hospitals.reduce((total, hospital) => {
+	        		hospital.doctors.forEach((doc) => total.push(new ObjectId(doc)));
+	        		return total;
+	        		}, [])
+	        };
         }
-	    const doctors = await doctorDAL.getDoctorsWithPages(filter, paginator) || {};
+	    const doctors = await doctorDAL.getDoctorsWithPages(query, paginator) || {};
 	    return new ResponseWithMeta(doctors)
     }catch(err){
         log.error({id, name}, 'getDoctor error', err);
