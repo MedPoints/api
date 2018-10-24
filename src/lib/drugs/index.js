@@ -42,7 +42,10 @@ exports.getDrugs = async ({name, id, groupId, pharmacyId, filter}, paginator) =>
 				const pharmQuery = {};
 				pharmQuery['location.city'] = filter.city;
 				const pharmacies = await pharmacyDal.getAllPharmaciesWithoutPages(pharmQuery);
-				query.ids = pharmacies.map().drugs.map(x => x);
+				query.ids = pharmacies.reduce((total, {drugs}) => {
+					total.push(...drugs.map(drug => new ObjectId(drug)));
+					return total;
+				}, []);
 			}
 		}
 
