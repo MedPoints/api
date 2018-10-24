@@ -44,6 +44,7 @@ exports.getServices = async function({id, name, hospital, doctor, filter}, pagin
 				}
 				const doctorIds = hospitals.reduce((total, {doctors}) => {
 					total.push(...doctors.map(doctor => new ObjectId(doctor)));
+					return total;
 				}, []);
 				const doctors = await doctorsDAL.getDoctors({_id: {$in: doctorIds}}, null);
 				const services = new Set();
