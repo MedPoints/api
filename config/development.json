@@ -7,7 +7,7 @@
     "level": "debug"
   },
   "mongo": {
-    "port": 27018,
+    "port": 27017,
     "host": "localhost",
     "dbName": "medpoint_test"
   },
