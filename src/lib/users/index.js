@@ -1,7 +1,12 @@
 'use strict';
 
+const Promise = require('bluebird');
 const uuid = require('uuid/v4');
 const utils = require('../utils');
+
+const doctorsModule = require('../doctors/index');
+const hospitalsModule = require('../hospitals/index');
+const pharmacyModule =  require('../pharmacies/index');
 
 const User = require('../../models/user');
 
@@ -106,6 +111,49 @@ exports.addToFavorites = async ({publicKey, privateKey}, favorite) => {
 		const userId = utils.createUserId(publicKey, privateKey);
 		await authDAL.addFavorite(userId, favorite);
 		return 'OK';
+	}finally{
+		authDAL.close();
+	}
+};
+
+exports.getFavorites = async ({publicKey, privateKey}) => {
+	const authDAL = await dal.open('auth');
+	const userId = utils.createUserId(publicKey, privateKey);
+	try{
+		const result = {
+			clinics: [],
+			pharmacies: [],
+			doctors: [],
+		};
+
+		const user = await authDAL.getUserById(userId);
+		if(!user){
+			throw new Error('USER_NOT_EXIST');
+		}
+		if (!user.favorites || user.favorites.length === 0) {
+			return result;
+		}
+		const clinicsFavs = user.favorites.filter(({type}) => type ===  'clinic');
+		const doctorFavs = user.favorites.filter(({type}) => type ===  'doctor');
+		const pharmacyFavs = user.favorites.filter(({type}) => type ===  'pharmacy');
+		
+		
+		await Promise.all([
+			Promise.each(clinicsFavs, async ({id}) => {
+				const clinic = await hospitalsModule.getHospital({id});
+				result.clinics.push(clinic);
+			}),
+			Promise.map(doctorFavs, async ({id}) => {
+				const doctor = await doctorsModule.getDoctorById(id);
+				result.doctors.push(doctor);
+			}),
+			Promise.map(pharmacyFavs, async ({id}) => {
+				const pharmacy = await pharmacyModule.getPharmacies({id});
+				result.pharmacies.push(pharmacy);
+			}),
+		]);
+		
+		return result;
 	}finally{
 		authDAL.close();
 	}

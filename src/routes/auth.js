@@ -53,6 +53,15 @@ router.put('/update', validator.updateProfileValidator, async (req, res, next) =
 	}
 });
 
+router.get('/:publicKey/:privateKey/favorites', async (req, res, next) => {
+	try{
+		res.result = await users.getFavorites(req.params);
+		next();
+	}catch(err){
+		next(err);
+	}
+});
+
 router.post('/:publicKey/:privateKey/favorites', validator.addToFavorites, async (req, res, next) => {
 	try{
 		res.result = await users.addToFavorites(req.params, req.body);
