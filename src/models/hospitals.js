@@ -2,7 +2,7 @@ const ObjectId = require("mongodb").ObjectId;
 const LocationModel = require('./location');
 
 class HospitalBaseModel {
-	constructor({name, network, departments, specializations, coordinations, email, phone, site, location, photos, doctors, workTime, work_time}) {
+	constructor({name, network, departments, specializations, coordinations, email, phone, site, location, photos, doctors, workTime, work_time, ratings}) {
 		this.name = name || '';
 		this.network = network || '';
 		this.specializations = specializations || [];
@@ -15,6 +15,7 @@ class HospitalBaseModel {
 		this.photos = photos || [];
 		this.doctors = doctors || [];
 		this.work_time = workTime || work_time;
+		this.ratings = ratings || [];
 	}
 }
 
