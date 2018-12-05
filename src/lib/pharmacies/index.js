@@ -9,12 +9,12 @@ const log = require('../../utils/logger').getLogger('PHARMACIES');
 exports.getPharmacies = async function({id, name, drugId, filter}, paginator){
 	const pharmaciesDAL = await dal.open('pharmacies');
 	try{
+		let query = {};
 		if(id){
 			return await pharmaciesDAL.getPharmacyById(id);
 		}else if(name){
-			return await pharmaciesDAL.getPharmacyByName(name);
+			query.name = {$regex: name};
 		}
-		let query = {};
 		if(drugId){
 			query.drugs = drugId;
 		}

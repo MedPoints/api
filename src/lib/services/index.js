@@ -12,12 +12,12 @@ exports.getServices = async function({id, name, hospital, doctor, filter}, pagin
 	const doctorsDAL = await dal.open('doctors');
 	const hospitalDAL = await dal.open('hospitals');
 	try{
+		const query = {};
 		if(id){
 			return servicesDAL.getServiceById(id);
 		}else if(name){
-			return servicesDAL.getServiceByName(name);
+			query.name = {$regex: name};
 		}
-		const query = {};
 		if(hospital){
 			const h = await hospitalDAL.getHospitalById(hospital);
 			const doctors = await doctorsDAL.getDoctors({_id: {$in: h.doctors.map(doctor => new ObjectId(doctor))}}, null);
