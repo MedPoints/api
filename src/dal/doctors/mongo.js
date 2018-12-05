@@ -177,6 +177,9 @@ exports.changeRateOfDoctor = async function(id, rate){
  * @return {Promise<DoctorResponse>}
  */
 async function getDoctorByFilter(filter){
-	const result = await exports.getDoctors(filter, null, true);
-	return new DoctorResponse(result[0] || {});
+	const [result] = await exports.getDoctors(filter, null, true);
+	if (!result) {
+		return null;
+	}
+	return new DoctorResponse(result || {});
 }

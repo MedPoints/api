@@ -1,3 +1,5 @@
+'use strict';
+
 const Promise = require('bluebird');
 const dal = require('../../dal/index');
 const {ResponseWithMeta} = require('../../routes/responses');

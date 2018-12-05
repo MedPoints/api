@@ -1,3 +1,5 @@
+'use strict';
+
 const Promise = require('bluebird');
 const ObjectId = require('mongodb').ObjectId;
 const dal = require('../../dal/index');

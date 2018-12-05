@@ -1,3 +1,5 @@
+'use strict'
+
 const ObjectId = require('mongodb').ObjectId;
 const Promise = require('bluebird');
 const dal = require('../../dal/index');
@@ -20,9 +22,11 @@ const HOSPITALS_DAL_NAME = 'hospitals';
  * @returns {Promise<ResponseWithMeta>}
  */
 exports.getHospital = async ({id, name, country, specializationId, service, filter}, paginator) => {
-    const hospitalsDal = await dal.open(HOSPITALS_DAL_NAME);
-    const doctorsDal = await dal.open(DOCTORS_DAL_NAME);
-    const serviceDal = await dal.open('services');
+    const [
+        hospitalsDal,
+        doctorsDal,
+        serviceDal
+    ] = await Promise.all([dal.open(HOSPITALS_DAL_NAME), dal.open(DOCTORS_DAL_NAME), dal.open('services')]);
 	const getCountOfServicesAndDoctors = async (hospital) => {
 		const services = new Set();
 		await Promise.each(hospital.doctors, async (id) => {
@@ -65,7 +69,7 @@ exports.getHospital = async ({id, name, country, specializationId, service, filt
 	    result.data = await Promise.map(result.data, getCountOfServicesAndDoctors);
         return new ResponseWithMeta(result);
     }catch(err){
-        log.error({id, name}, 'getHospital error', err);
+        log.error({id, name, err}, 'getHospital error');
         throw err;
     }finally{
     	doctorsDal.close();
