@@ -10,9 +10,9 @@ exports.getPharmacies = async function({id, name, drugId, filter}, paginator){
 	const pharmaciesDAL = await dal.open('pharmacies');
 	try{
 		if(id){
-			return pharmaciesDAL.getPharmacyById(id);
+			return await pharmaciesDAL.getPharmacyById(id);
 		}else if(name){
-			return pharmaciesDAL.getPharmacyByName(name);
+			return await pharmaciesDAL.getPharmacyByName(name);
 		}
 		let query = {};
 		if(drugId){

@@ -5,12 +5,12 @@ const ObjectId = require('mongodb').ObjectId;
 const {ServiceCreate, ServiceResponse} = require('../../models/service');
 
 exports.getServiceById = async function(id, raw=false){
-	return ServicesQuery.call(this, {_id: ObjectId(id)}, raw);
+	return ServicesQuery.call(this, {_id: new ObjectId(id)}, raw);
 };
 
 
 exports.getServiceByName = async function(name){
-	return ServicesQuery.call(this, {name});
+	return ServicesQuery.call(this, {name: {$regex: name}});
 };
 
 exports.getAllServices = async function(filter, paginator){
@@ -59,6 +59,9 @@ exports.deleteService = async function(id){
 async function ServicesQuery(filter, raw=false){
 	const collection = this.mongo.collection(collectionName);
 	const [service] = await collection.find(filter).limit(1).toArray();
+	if (!service) {
+		return null;
+	}
 	if(raw){
 		return service;
 	}

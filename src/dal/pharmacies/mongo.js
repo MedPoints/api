@@ -11,7 +11,7 @@ exports.getPharmacyById = async function(id){
 
 
 exports.getPharmacyByName = async function(name){
-	return pharmaciesQuery.call(this, {name});
+	return pharmaciesQuery.call(this, {name: {$regex: name}});
 };
 
 exports.getAllPharmaciesWithoutPages = async function(filter){
@@ -74,6 +74,9 @@ exports.changeRateOfPharmacy = async function(id, rate){
 async function pharmaciesQuery(filter){
 	const collection = this.mongo.collection(collectionName);
 	const [pharmacy] = await collection.find(filter).limit(1).toArray();
-	return new PharmaciesResponse(pharmacy || {});
+	if (!pharmacy) {
+		return null;
+	}
+	return new PharmaciesResponse(pharmacy);
 }
 

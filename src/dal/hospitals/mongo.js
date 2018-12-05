@@ -40,7 +40,7 @@ const {HospitalResponse, HospitalCreate} = require("../../models/hospitals");
  * @returns {Promise<HospitalResponse>}
  */
 exports.getHospitalById = async function(id){
-    const result = await hospitalQuery.call(this, {_id: ObjectId(id)});
+    const result = await hospitalQuery.call(this, {_id: new ObjectId(id)});
     return new HospitalResponse(result);
 };
 
@@ -49,7 +49,7 @@ exports.getHospitalById = async function(id){
  * @return {Promise<HospitalResponse>}
  */
 exports.getHospitalByName = async function(name){
-    const result = await hospitalQuery.call(this, {name});
+    const result = await hospitalQuery.call(this, {name: {$regex: name}});
     if (!result) {
         return null;
     }
