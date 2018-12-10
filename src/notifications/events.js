@@ -2,7 +2,7 @@
 
 const {EventEmitter} = require('events');
 const {render} = require('./renderer');
-const {registration, ticket, question} = require('./formatters');
+const {registration, ticket, question, subscription} = require('./formatters');
 const backends = require('./backends/index');
 
 class NotificationEvents{
@@ -12,8 +12,7 @@ class NotificationEvents{
 	}
 	
 	raise(event, destination, data){
-		const {emitter} = this;
-		emitter.emit(event, {destination, data});
+		this.emitter.emit(event, {destination, data});
 	}
 	
 	_initEvents(){
@@ -35,6 +34,7 @@ class NotificationEvents{
 		emitter.on('registration', onEvent('registration', registration));
 		emitter.on('ticket', onEvent('ticket', ticket));
 		emitter.on('new_question', onEvent('question', question));
+		emitter.on('subscription', onEvent('subscription', subscription));
 	}
 }
 

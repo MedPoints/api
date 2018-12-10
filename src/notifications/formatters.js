@@ -15,4 +15,8 @@ exports.ticket = function(ticket){
 
 exports.question = function(question){
 	return question;
-}
+};
+
+exports.subscription = function(email){
+	return {email};
+};
