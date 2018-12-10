@@ -60,13 +60,13 @@ exports.updatePharmacy = async function(id, pharmacy){
 
 exports.deletePharmacy = async function(id){
 	const collection = this.mongo.collection(collectionName);
-	await collection.remove({_id: ObjectId(id)});
+	await collection.remove({_id: new ObjectId(id)});
 };
 
 exports.changeRateOfPharmacy = async function(id, rate){
 	const collection = this.mongo.collection(collectionName);
 	const entity = new PharmacyRate(rate);
-	await collection.update({_id: ObjectId(id)}, {
+	await collection.update({_id: new ObjectId(id)}, {
 		$push: {ratings: entity}
 	});
 };

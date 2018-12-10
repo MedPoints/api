@@ -1,3 +1,5 @@
+'use strict';
+
 const Promise = require('bluebird');
 const DoctorRate = require("../../models/rates").DoctorRate;
 const {ObjectId} = require('mongodb');
@@ -10,7 +12,11 @@ const collectionName = 'doctors';
  * @returns {Promise<DoctorResponse>}
  */
 exports.getDoctorById = async function(id){
-	return getDoctorByFilter.call(this, {_id: ObjectId(id)});
+	const [result] = await exports.getDoctors({_id: new ObjectId(id)}, null, true);
+	if (!result) {
+		return null;
+	}
+	return new DoctorResponse(result || {});
 };
 
 exports.getDoctors = async function(filter, paginator, raw=false){
@@ -147,7 +153,7 @@ exports.saveDoctor = async function(doctor){
 exports.updateDoctor = async function(id, doctor){
 	const collection = this.mongo.collection(collectionName);
 	delete doctor.id;
-	await collection.update({_id: ObjectId(id)}, {$set: doctor});
+	await collection.update({_id: new ObjectId(id)}, {$set: doctor});
 };
 
 /**
@@ -171,15 +177,3 @@ exports.changeRateOfDoctor = async function(id, rate){
 		$push: {ratings: entity}
 	});
 };
-
-/**
- * @param {Object} filter
- * @return {Promise<DoctorResponse>}
- */
-async function getDoctorByFilter(filter){
-	const [result] = await exports.getDoctors(filter, null, true);
-	if (!result) {
-		return null;
-	}
-	return new DoctorResponse(result || {});
-}

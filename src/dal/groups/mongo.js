@@ -12,7 +12,7 @@ exports.getAllCategories = async function(filter, paginator){
 };
 
 exports.getCategoryById = async function(id){
-	return exports.getCategoryByFilter({_id: ObjectId(id)});
+	return exports.getCategoryByFilter({_id: new ObjectId(id)});
 };
 
 exports.getCategoryByName = async function(name){
@@ -28,7 +28,7 @@ exports.saveCategory = async function(category){
 
 exports.updateCategory = async function(id, category){
 	const collection = this.mongo.collection(collectionName);
-	await collection.update({_id: ObjectId(id)}, category);
+	await collection.update({_id: new ObjectId(id)}, category);
 };
 
 exports.getCategoryByFilter = async function(filter){
@@ -39,7 +39,7 @@ exports.getCategoryByFilter = async function(filter){
 
 exports.deleteCategory = async function(id){
 	const collection = this.mongo.collection(collectionName);
-	await collection.remove({_id: ObjectId(id)});
+	await collection.remove({_id: new ObjectId(id)});
 };
 
 exports.getCount = async function(filter={}){
