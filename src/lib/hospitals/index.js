@@ -61,9 +61,10 @@ exports.getHospital = async ({id, name, country, specializationId, service, filt
             }
         }
         if(service){
-            const s = await serviceDal.getServiceById(service, true);
-            let hospitalIds = s.providers && s.providers.hospitals || [];
-        	query._id = {$in: hospitalIds.map(hospital => new ObjectId(hospital.id))};
+            const hospitals = new Set();
+            const doctors = await doctorsDal.getDoctors({services: service});
+            doctors.forEach(({hospital}) => hospitals.add(hospital.id));
+        	query._id = {$in: Array.from(hospitals).map(id => new ObjectId(id))};
         }
         const result = await hospitalsDal.getHospitalsWithPages(query, paginator) || {};
 	    result.data = await Promise.map(result.data, getCountOfServicesAndDoctors);
