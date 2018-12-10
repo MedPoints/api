@@ -1,3 +1,5 @@
+'use strict';
+
 const os = require('os');
 const cluster = require('cluster');
 
@@ -23,6 +25,14 @@ class Master extends BaseWorker {
 		for(let i = 0; i < workers; i++){
 			this._createWorkers();
 		}
+		process.on('SIGTERM', () => {
+			Object.keys(this._workers).forEach((pid) => {
+				this._logger.info({workerPid: pid}, 'close connection');
+				this._workers[pid].send('shutdown');
+				this._workers[pid].disconnect();
+			});
+			setImmediate(process.exit);
+		});
 	}
 	
 	/**
@@ -33,7 +43,7 @@ class Master extends BaseWorker {
 		const pid = worker.process.pid;
 		this._logger.info({workerPid: pid}, 'create new worker');
 		this._workers[pid] = worker;
-		worker.on('exit', () => {
+		worker.once('exit', () => {
 			this._logger.info({workerPid: pid}, 'worker died. Restart');
 			delete this._workers[pid];
 			this._createWorkers();

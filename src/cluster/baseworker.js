@@ -17,11 +17,11 @@ class BaseWorker {
 		throw new Error('NOT_IMPLEMENTED_METHOD');
 	}
 	_errorHandling(){
-		const graceful = async () => {
+		process.on('SIGTERM', async () => {
 			this._logger.warn('SIGTERM signal was handled');
 			await Promise.all(this._onClose);
-		};
-		process.on('SIGTERM', graceful);
+			process.exit();
+		});
 
 		process.on('uncaughtException', (ex) => {
 			this._logger.error(ex.stack || ex, 'uncaughtException');
@@ -29,7 +29,12 @@ class BaseWorker {
 		process.on('unhandledRejection', (rejection) => {
 			this._logger.error(rejection, 'unhandledRejection');
 		});
-		
+		process.on('message', async (msg) => {
+			if (msg === 'shutdown') {
+				await Promise.all(this._onClose);
+				process.exit();
+			}
+		});
 	}
 }
 
