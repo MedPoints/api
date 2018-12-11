@@ -69,14 +69,12 @@ exports.getServices = async function({id, name, hospital, doctor, filter}, pagin
 		}
 		await Promise.each(result.data, async (service) => {
 			const doctors = await doctorsDAL.getDoctors({services: service.id.toString()});
-			const hospitals = doctors.reduce((result, doctor) => {
-				if (result.find(({id}) => id === doctor.hospital.id) === undefined){
-					result.push(doctor.hospital);
-				}
-				return result;
-			}, []);
+			const hospitals = new Set();
+			doctors.forEach(({hospital}) => {
+				hospitals.add(hospital.id);
+			});
 			service.providers.doctors = doctors;
-			service.providers.hospitals = hospitals;
+			service.providers.hospitals = await Promise.map(Array.from(hospitals), async (id) => hospitalDAL.getHospitalById(id));
 		});
 		return new ResponseWithMeta(result)
 	}catch(err){
