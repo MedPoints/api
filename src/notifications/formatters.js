@@ -18,5 +18,5 @@ exports.question = function(question){
 };
 
 exports.subscription = function(email){
-	return {email};
+	return email;
 };
