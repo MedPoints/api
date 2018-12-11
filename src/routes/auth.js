@@ -29,6 +29,10 @@ router.post('/register', validator.registerValidator, async (req, res, next) => 
 router.get('/confirm', validator.confirmValidator, async (req, res, next) => {
 	try{
 		res.result = await users.confirm(req.query);
+		if (res.result === 'OK') {
+			res.redirect(301, 'http://medpoints.online/confirm');
+			return;
+		}
 		next();
 	}catch(err){
 		next(err);
