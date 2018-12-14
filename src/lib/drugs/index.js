@@ -26,7 +26,7 @@ exports.getDrugs = async ({name, id, groupId, pharmacyId, filter}, paginator) =>
             const pharmacy = await pharmacyDal.getPharmacyById(pharmacyId);
             query.ids = pharmacy.drugs.map(x => x);
 		}
-		
+
 		if(filter){
 			if(filter.insurance){
 				query['is_covered_by_insurance'] = filter.insurance === 'on';

@@ -1,7 +1,7 @@
 'use strict';
 
 const Promise = require('bluebird');
-const DoctorRate = require("../../models/rates").DoctorRate;
+const {DoctorRate} = require('../../models/rates');
 const {ObjectId} = require('mongodb');
 const {DoctorCreate, DoctorResponse} = require("../../models/doctors");
 

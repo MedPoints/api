@@ -22,13 +22,6 @@ exports.getPharmacies = async function({id, name, drugId, filter}, paginator){
 			if(filter.city && filter.city !== 'worldwide'){
 				query['location.city'] = filter.city;
 			}
-			if(filter.maxPrice) {
-				const maxPrice = Number(filter.maxPrice);
-				query['price.mpts'] = {$lte: maxPrice};
-			}
-			if(filter.prescription){
-				query['is_by_prescription'] = filter.prescription === 'on';
-			}
 		}
 		const result = await pharmaciesDAL.getPharmaciesWithPages(query, paginator) || {};
 		return new ResponseWithMeta(result)

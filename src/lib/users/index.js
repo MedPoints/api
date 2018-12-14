@@ -143,11 +143,11 @@ exports.getFavorites = async ({publicKey, privateKey}) => {
 				const clinic = await hospitalsModule.getHospital({id});
 				result.clinics.push(clinic);
 			}),
-			Promise.map(doctorFavs, async ({id}) => {
+			Promise.each(doctorFavs, async ({id}) => {
 				const doctor = await doctorsModule.getDoctorById(id);
 				result.doctors.push(doctor);
 			}),
-			Promise.map(pharmacyFavs, async ({id}) => {
+			Promise.each(pharmacyFavs, async ({id}) => {
 				const pharmacy = await pharmacyModule.getPharmacies({id});
 				result.pharmacies.push(pharmacy);
 			}),

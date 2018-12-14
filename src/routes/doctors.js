@@ -83,7 +83,7 @@ router.get('/count', async (req, res, next) => {
 	}
 });
 
-router.post('/rating/:id', async (req, res, next) => {
+router.post('/:id/rating/', async (req, res, next) => {
 	const id = req.params.id;
 	const rate = req.body;
 	try{
