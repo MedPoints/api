@@ -1,3 +1,5 @@
+'use strict';
+
 const ObjectId = require("mongodb").ObjectId;
 
 
@@ -16,7 +18,7 @@ class BaseDoctorModel {
 class DoctorCreate extends BaseDoctorModel {
 	constructor(entity) {
 		super(entity);
-		this._id = ObjectId(entity._id || entity.id);
+		this._id = new ObjectId(entity._id || entity.id);
 	}
 }
 
@@ -31,6 +33,7 @@ class DoctorResponse extends BaseDoctorModel {
 			this.rate /= this.ratings.length;
 			this.rate = Math.floor(this.rate);
 		}
+		const round = (num) => Number(num.toFixed(2));
 		const opinion = this.ratings.reduce((result, rate) => {
 			const {knowledge, skills, attention, priceQuality} = rate.commonRate;
 			result.knowledge += knowledge;
@@ -40,10 +43,10 @@ class DoctorResponse extends BaseDoctorModel {
 			return result;
 		}, {knowledge: 0, skills: 0, attention: 0, priceQuality: 0});
 		if (this.ratings.length !== 0) {
-			opinion.knowledge /= this.ratings.length;
-			opinion.skills /= this.ratings.length;
-			opinion.attention /= this.ratings.length;
-			opinion.priceQuality /= this.ratings.length;
+			opinion.knowledge = round(opinion.knowledge / this.ratings.length);
+			opinion.skills = round(opinion.skills / this.ratings.length);
+			opinion.attention = round(opinion.attention / this.ratings.length);
+			opinion.priceQuality = round(opinion.priceQuality / this.ratings.length);
 		}
 		this.opinion = opinion;
 	}
