@@ -16,7 +16,7 @@ exports.getServices = async function({id, name, hospital, doctor, filter}, pagin
 		if(id){
 			return servicesDAL.getServiceById(id);
 		}else if(name){
-			query.name = {$regex: name};
+			query.name = {$regex: name, $options: 'i'};
 		}
 		if(hospital){
 			const h = await hospitalDAL.getHospitalById(hospital);

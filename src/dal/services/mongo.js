@@ -10,7 +10,7 @@ exports.getServiceById = async function(id, raw=false){
 
 
 exports.getServiceByName = async function(name){
-	return ServicesQuery.call(this, {name: {$regex: name}});
+	return ServicesQuery.call(this, {name: {$regex: name, $options: 'i'}});
 };
 
 exports.getAllServices = async function(filter, paginator){

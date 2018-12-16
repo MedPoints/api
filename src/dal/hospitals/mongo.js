@@ -49,7 +49,7 @@ exports.getHospitalById = async function(id){
  * @return {Promise<HospitalResponse>}
  */
 exports.getHospitalByName = async function(name){
-    const result = await hospitalQuery.call(this, {name: {$regex: name}});
+    const result = await hospitalQuery.call(this, {name: {$regex: name, $options: 'i'}});
     if (!result) {
         return null;
     }

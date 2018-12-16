@@ -47,7 +47,7 @@ exports.getHospital = async ({id, name, country, specializationId, service, filt
             return await getCountOfServicesAndDoctors(hospital);
         }
         if(name){
-	        query.name = {$regex: name};
+	        query.name = {$regex: name, $options: 'i'};
         }
         if(country){
             query['location.country'] = country;

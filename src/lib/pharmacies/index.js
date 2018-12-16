@@ -13,7 +13,7 @@ exports.getPharmacies = async function({id, name, drugId, filter}, paginator){
 		if(id){
 			return await pharmaciesDAL.getPharmacyById(id);
 		}else if(name){
-			query.name = {$regex: name};
+			query.name = {$regex: name, $options: 'i'};
 		}
 		if(drugId){
 			query.drugs = drugId;
