@@ -20,3 +20,7 @@ exports.question = function(question){
 exports.subscription = function(email){
 	return email;
 };
+
+exports.book = function({doctor, hospital, service, date}){
+	return {doctor, hospital, service, date};
+};

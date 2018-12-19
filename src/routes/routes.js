@@ -20,6 +20,7 @@ const routes = [
 	require('./tickets'),
 	require('./faq'),
 	require('./subscriptions'),
+	require('./notifications'),
 ];
 
 const PREFIX = '/api';

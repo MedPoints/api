@@ -2,7 +2,7 @@
 
 const {EventEmitter} = require('events');
 const {render} = require('./renderer');
-const {registration, ticket, question, subscription} = require('./formatters');
+const {registration, ticket, question, subscription, book} = require('./formatters');
 const backends = require('./backends/index');
 
 class NotificationEvents{
@@ -35,6 +35,7 @@ class NotificationEvents{
 		emitter.on('ticket', onEvent('ticket', ticket));
 		emitter.on('new_question', onEvent('question', question));
 		emitter.on('subscription', onEvent('subscription', subscription));
+		emitter.on('book', onEvent('book', book));
 	}
 }
 
