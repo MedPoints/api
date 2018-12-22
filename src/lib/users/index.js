@@ -109,6 +109,13 @@ exports.addToFavorites = async ({publicKey, privateKey}, favorite) => {
 	const authDAL = await dal.open('auth');
 	try{
 		const userId = utils.createUserId(publicKey, privateKey);
+		const user = await authDAL.getUserById(userId);
+		if(!user){
+			throw new Error('USER_NOT_EXIST');
+		}
+		if (user.favorites && user.favorites.find(({id}) => id === favorite.id)) {
+			return 'ALREADY_ADDED';
+		}
 		await authDAL.addFavorite(userId, favorite);
 		return 'OK';
 	}finally{
