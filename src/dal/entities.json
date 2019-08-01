@@ -1,0 +1,32 @@
+{
+  "auth": {
+    "mongo": true
+  },
+  "hospitals": {
+    "mongo": true
+  },
+  "doctors": {
+    "mongo": true
+  },
+  "drugs": {
+    "mongo": true
+  },
+  "pharmacies": {
+    "mongo": true
+  },
+  "services": {
+    "mongo": true
+  },
+  "groups": {
+    "mongo": true
+  },
+  "specializations": {
+    "mongo": true
+  },
+  "tickets": {
+    "mongo": true
+  },
+  "subscriptions": {
+    "mongo": true
+  }
+}

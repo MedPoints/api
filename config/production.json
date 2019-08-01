@@ -1,0 +1,14 @@
+{
+  "server": {
+    "maxProcess": 0,
+    "port": 8080
+  },
+  "logger": {
+    "level": "debug"
+  },
+  "mongo": {
+    "port": 27017,
+    "host": "localhost",
+    "dbName": "medpoint"
+  }
+}

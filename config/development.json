@@ -1,0 +1,25 @@
+{
+  "server": {
+    "maxProcess": 1,
+    "port": 8080
+  },
+  "logger": {
+    "level": "error"
+  },
+  "mongo": {
+    "port": 27017,
+    "host": "localhost",
+    "dbName": "medpoint_test"
+  },
+  "notifications": {
+    "email": {
+      "host": "smtp.yandex.ru",
+      "port": 587,
+      "auth": {
+        "user": "medpoints.online@yandex.ru",
+        "pass": "Fg34$dCvSaPr#1"
+      }
+    }
+  },
+  "adminEmail": "medpoints.online@yandex.ru"
+}
