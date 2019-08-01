@@ -4,8 +4,9 @@ const ObjectId = require("mongodb").ObjectId;
 
 
 class BaseDoctorModel {
-	constructor({name, prefix, specializations, services, statement, education, ratings}) {
+	constructor({name, slug, prefix, specializations, services, statement, education, ratings}) {
 		this.name = name;
+		this.slug = slug;
 		this.prefix = prefix;
 		this.specializations = specializations || [];
 		this.services = services || [];
