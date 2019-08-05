@@ -2,8 +2,9 @@ const {ObjectId} = require('mongodb');
 
 
 class BaseSpecializationModel {
-	constructor({name}){
+	constructor({name, slug}){
 		this.name = name;
+		this.slug = slug;
 	}
 }
 

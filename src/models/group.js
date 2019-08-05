@@ -1,8 +1,9 @@
 const {ObjectId} = require("mongodb");
 
 class BaseGroupModel {
-	constructor({name, drugs}) {
+	constructor({name, slug, drugs}) {
 		this.name = name;
+		this.slug = slug;
 		this.drugs = drugs || [];
 	}
 }

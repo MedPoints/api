@@ -4,8 +4,9 @@ const Price = require('./price');
 const {GroupDrugField} = require('./group');
 
 class BaseDrugModel {
-	constructor({name, short_descr, full_descr, group, price, is_covered_by_insurance, is_by_prescription}) {
+	constructor({name, slug, short_descr, full_descr, group, price, is_covered_by_insurance, is_by_prescription}) {
 		this.name = name;
+		this.slug = slug;
 		this.short_descr = short_descr;
 		this.full_descr = full_descr;
 		this.price = new Price(price);

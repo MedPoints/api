@@ -3,8 +3,9 @@ const ObjectId = require("mongodb").ObjectId;
 const Price = require('./price');
 
 class BaseServiceModel {
-	constructor({name, short_descr, full_descr, is_covered_by_insurance, price, time, providers}){
+	constructor({name, slug, short_descr, full_descr, is_covered_by_insurance, price, time, providers}){
 		this.name = name;
+		this.slug = slug;
 		this.short_descr = short_descr;
 		this.full_descr = full_descr;
 		this.is_covered_by_insurance = is_covered_by_insurance;

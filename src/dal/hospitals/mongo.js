@@ -94,7 +94,8 @@ exports.getHospitalsGroupedByLocation= async () => {
 			    hospitals: {
 				    "$push": {
 					    id: {$toString: "$_id"},
-					    name: "$name",
+						name: "$name",
+						slug: 1,
 					    address: "$location.address",
 					    coordinations: "$coordinations"
 				    }
