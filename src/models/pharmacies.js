@@ -40,8 +40,8 @@ class PharmaciesResponse extends BasePharmaciesModel {
 			return result;
 		}, {service: 0, priceQuality: 0});
 		if (this.ratings.length !== 0) {
-			opinion.service /= this.ratings.length;
-			opinion.priceQuality /= this.ratings.length;
+			opinion.service = round(opinion.service / this.ratings.length);
+			opinion.priceQuality = round(opinion.priceQuality / this.ratings.length);
 		}
 		this.opinion = opinion;
 	}
