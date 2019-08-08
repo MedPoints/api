@@ -33,6 +33,7 @@ class PharmaciesResponse extends BasePharmaciesModel {
 			this.rate /= this.ratings.length;
 			this.rate = Math.floor(this.rate);
 		}
+		const round = (num) => Number(num.toFixed(2));
 		const opinion = this.ratings.reduce((result, rate) => {
 			const {service, priceQuality} = rate.commonRate;
 			result.service += service;
