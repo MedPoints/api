@@ -17,7 +17,7 @@ router.get('/:publicKey', async (req, res, next) => {
 router.post('/', async (req, res, next) => {
 	const upload = req.body;
 	try{
-		await upload.addUpload(upload);
+		await uploads.addUpload(upload);
 		res.result = 'OK';
 		next();
 	}catch(err){
