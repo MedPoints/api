@@ -13,3 +13,6 @@ router.get('/:publicKey', async (req, res, next) => {
 		next(e);
 	}
 });
+
+exports.module = router;
+exports.name = 'uploads';
