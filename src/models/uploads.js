@@ -1,5 +1,7 @@
 'use strict';
 
+const ObjectId = require("mongodb").ObjectId;
+
 class Upload {
 	constructor({publicKey, transactionId, fullname, filename, timestamp, extension}){
 		this.publicKey = publicKey;
