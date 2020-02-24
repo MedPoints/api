@@ -28,5 +28,8 @@
   },
   "subscriptions": {
     "mongo": true
+  },
+  "uploads": {
+    "mongo": true
   }
 }
