@@ -1,7 +1,5 @@
 'use strict';
 
-const ObjectId = require("mongodb").ObjectId;
-
 class Upload {
 	constructor({publicKey, transactionId, fullname, filename, timestamp, extension}){
 		this.publicKey = publicKey;
@@ -13,11 +11,4 @@ class Upload {
 	}
 }
 
-class UploadCreate extends Upload {
-	constructor(entity) {
-		super(entity);
-		this._id = new ObjectId(entity._id || entity.id);
-	}
-}
-
-exports.UploadCreate = UploadCreate;
+exports.Upload = Upload;

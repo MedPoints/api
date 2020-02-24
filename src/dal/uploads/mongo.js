@@ -1,7 +1,5 @@
 'use strict';
 
-const {UploadCreate} = require("../../models/uploads");
-
 const collectionName = 'uploads';
 
 exports.getUploadsByPublicKey = async function(publicKey){
@@ -16,7 +14,6 @@ exports.getUploads = async function(filter){
 
 exports.addUpload = async function(upload){
 	const collection = this.mongo.collection(collectionName);
-	const entity = new UploadCreate(upload);
-	await collection.insert(entity);
+	await collection.insert(upload);
 };
 
