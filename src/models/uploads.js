@@ -11,4 +11,11 @@ class Upload {
 	}
 }
 
-exports.Upload = Upload;
+class UploadCreate extends Upload {
+	constructor(entity) {
+		super(entity);
+		this._id = new ObjectId(entity._id || entity.id);
+	}
+}
+
+exports.UploadCreate = UploadCreate;

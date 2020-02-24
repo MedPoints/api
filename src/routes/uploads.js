@@ -14,5 +14,16 @@ router.get('/:publicKey', async (req, res, next) => {
 	}
 });
 
+router.post('/', async (req, res, next) => {
+	const upload = req.body;
+	try{
+		await upload.addUpload(upload);
+		res.result = 'OK';
+		next();
+	}catch(err){
+		next(err);
+	}
+});
+
 exports.module = router;
 exports.name = 'uploads';
