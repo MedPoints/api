@@ -4,6 +4,16 @@ const tokens = require('../lib/tokens/index');
 
 const router = new Router();
 
+router.get('/count/:publicKey', async (req, res, next) => {
+  const {publicKey} = req.params;
+	try{
+		res.result = await tokens.countTokensByPublicKey(publicKey);
+		next();
+	}catch(e){
+		next(e);
+	}
+});
+
 router.get('/:publicKey', async (req, res, next) => {
   const {publicKey} = req.params;
 	try{

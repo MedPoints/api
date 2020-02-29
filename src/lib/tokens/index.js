@@ -2,6 +2,18 @@
 
 const dal = require('../../dal/index');
 
+exports.countTokensByPublicKey = async (publicKey) => {
+	const tokensDAL = await dal.open('tokens');
+	try{
+		return await tokensDAL.countTokensByPublicKey(publicKey);
+	}catch(err){
+		log.error({publicKey}, 'countTokensByPublicKey error', err);
+		throw err;
+	}finally{
+		tokensDAL.close();
+	}
+};
+
 exports.getTokensByPublicKey = async (publicKey) => {
 	const tokensDAL = await dal.open('tokens');
 	try{
