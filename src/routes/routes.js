@@ -22,6 +22,7 @@ const routes = [
 	require('./subscriptions'),
 	require('./uploads'),
 	require('./foundations'),
+	require('./tokens'),
 	require('./notifications'),
 ];
 
