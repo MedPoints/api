@@ -14,7 +14,9 @@ exports.countTokensByPublicKey = async function(publicKey){
 		tokensCount += token.balanceUSD;
 	}
 
-	return tokensCount;
+	return {
+		count: tokensCount,
+	};
 }
 
 exports.getTokens = async function(filter){
