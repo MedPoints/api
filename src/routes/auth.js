@@ -75,5 +75,14 @@ router.post('/:publicKey/:privateKey/favorites', validator.addToFavorites, async
 	}
 });
 
+router.post('/:publicKey/:privateKey/favorites/remove', async (req, res, next) => {
+	try{
+		res.result = await users.removeFromFavorites(req.params, req.body);
+		next();
+	}catch(err){
+		next(err);
+	}
+});
+
 exports.module = router;
 exports.name = 'users';

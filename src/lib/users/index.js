@@ -123,6 +123,24 @@ exports.addToFavorites = async ({publicKey, privateKey}, favorite) => {
 	}
 };
 
+exports.removeFromFavorites = async ({publicKey, privateKey}, favorite) => {
+	const authDAL = await dal.open('auth');
+	try{
+		const userId = utils.createUserId(publicKey, privateKey);
+		const user = await authDAL.getUserById(userId);
+		if(!user){
+			throw new Error('USER_NOT_EXIST');
+		}
+		if (!user.favorites.find(({id}) => id === favorite.id)) {
+			throw new Error('FAVORITE_NOT_EXIST');
+		}
+		await authDAL.removeFavorite(userId, favorite);
+		return 'OK';
+	}finally{
+		authDAL.close();
+	}
+};
+
 exports.getFavorites = async ({publicKey, privateKey}) => {
 	const authDAL = await dal.open('auth');
 	const userId = utils.createUserId(publicKey, privateKey);

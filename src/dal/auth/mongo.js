@@ -44,3 +44,16 @@ exports.addFavorite = async function(id, favorite){
 		}
 	});
 };
+
+exports.removeFavorite = async function(id, favorite){
+	const collection = this.mongo.collection(collectionName);
+	await collection.update({
+		_id: id
+	}, {
+		$pull: {
+			favorites: {
+				id: {$eq: favorite.id}
+			}
+		}
+	});
+};
