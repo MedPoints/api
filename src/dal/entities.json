@@ -31,5 +31,8 @@
   },
   "uploads": {
     "mongo": true
+  },
+  "foundations": {
+    "mongo": true
   }
 }

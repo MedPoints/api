@@ -21,6 +21,7 @@ const routes = [
 	require('./faq'),
 	require('./subscriptions'),
 	require('./uploads'),
+	require('./foundations'),
 	require('./notifications'),
 ];
 
