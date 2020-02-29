@@ -34,5 +34,8 @@
   },
   "foundations": {
     "mongo": true
+  },
+  "tokens": {
+    "mongo": true
   }
 }
