@@ -89,6 +89,7 @@ exports.getDoctors = async function(filter, paginator, raw=false){
 				hospital: {
 					id: '$hospital._id',
 					name: '$hospital.name',
+					departments: '$hospital.departments',
 					location: '$hospital.location',
 				},
 				coordinations: '$hospitals.coordinations',
