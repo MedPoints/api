@@ -35,6 +35,7 @@ exports.getDoctors = async function(filter, paginator, raw=false){
 							id: '$id',
 							name: 1,
 							slug: 1,
+							departments: 1,
 							location: 1,
 							coordinations: 1
 						}
