@@ -2,7 +2,7 @@
 
 exports.registration = function({token, firstName, lastName}){
 	const fullname = `${firstName} ${lastName}`;
-	const link = `http://medpoints.online/confirmation?token=${token}`;
+	const link = `https://medpoints.online/confirmation?token=${token}`;
 	return {
 		fullname,
 		link,
