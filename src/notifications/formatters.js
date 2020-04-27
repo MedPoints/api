@@ -2,7 +2,7 @@
 
 exports.registration = function({token, firstName, lastName}){
 	const fullname = `${firstName} ${lastName}`;
-	const link = `http://46.101.121.69:8080/api/users/confirm?token=${token}`;
+	const link = `http://medpoints.online/confirmation?token=${token}`;
 	return {
 		fullname,
 		link,
