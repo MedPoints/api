@@ -45,10 +45,10 @@ exports.saveGroup = async function(entity){
 	}
 };
 
-exports.updateGroup = async function(id, entity){
+exports.updateGroup = async function(entity){
 	const groupsDal = await dal.open('groups');
 	try{
-		return groupsDal.updateCategory(id, entity);
+		return groupsDal.updateCategory(entity);
 	}catch(err){
 		log.error({id, name}, 'updateGroup error', err);
 		throw err;

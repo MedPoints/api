@@ -22,11 +22,11 @@ exports.getCategoryByName = async function(name){
 exports.saveCategory = async function(category){
 	const collection = this.mongo.collection(collectionName);
 	const entity = new GroupCreate(category);
-	const result = await collection.insert(entity);
-	return result;
+	await collection.insert(entity);
+	return entity;
 };
 
-exports.updateCategory = async function(id, category){
+exports.updateCategory = async function({id, category}){
 	const collection = this.mongo.collection(collectionName);
 	await collection.update({_id: new ObjectId(id)}, category);
 };

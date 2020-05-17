@@ -21,8 +21,7 @@ router.get('/', async (req, res, next) => {
 
 router.post('/', async (req, res, next) => {
 	try{
-		res.data = await group.saveGroup(req.body);
-		res.result = 'OK';
+		res.result = await group.saveGroup(req.body);
 		next();
 	}catch(err){
 		next(err);
