@@ -19,6 +19,16 @@ router.get('/', async (req, res, next) => {
 	next();
 });
 
+router.get('/timer', async (req, res, next) => {
+	const {interval} = req.query;
+	try{
+		res.result = await drugs.getGroupsByInterval(interval);
+		next();
+	}catch(err){
+		next(err);
+	}
+});
+
 router.post('/', async (req, res, next) => {
 	try{
 		res.result = await group.saveGroup(req.body);

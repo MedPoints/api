@@ -69,7 +69,7 @@ exports.getDrugsByInterval = async function(interval){
 	try{
 		return await drugsDal.getDrugsByInterval({"timestamp": {$lte: Date.now() - 60000*interval}});
 	}catch(err){
-		log.error({}, 'updateDrug error', err);
+		log.error({}, 'getDrugsByInterval error', err);
 		throw err;
 	}finally{
 		drugsDal.close();

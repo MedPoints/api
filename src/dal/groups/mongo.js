@@ -19,6 +19,17 @@ exports.getCategoryByName = async function(name){
 	return exports.getCategoryByFilter({name: name});
 };
 
+exports.getGroupsByInterval = async function(filter){
+	const collection = this.mongo.collection(collectionName);
+	const result = await collection.find(filter).toArray();
+	return result.map(el => {
+		return {
+			id: el._id.toString(), 
+			drugs: el.drugs,
+		};
+	});
+};
+
 exports.saveCategory = async function(category){
 	const collection = this.mongo.collection(collectionName);
 	const entity = new GroupCreate(category);

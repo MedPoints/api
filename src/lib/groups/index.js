@@ -33,6 +33,18 @@ exports.getGroup = async function({id}){
 	}
 };
 
+exports.getGroupsByInterval = async function(interval){
+	const groupsDal = await dal.open('drugs');
+	try{
+		return await groupsDal.getGroupsByInterval({"timestamp": {$lte: Date.now() - 60000*interval}});
+	}catch(err){
+		log.error({}, 'getGroupsByInterval error', err);
+		throw err;
+	}finally{
+		groupsDal.close();
+	}
+};
+
 exports.saveGroup = async function(entity){
 	const groupsDal = await dal.open('groups');
 	try{
