@@ -20,6 +20,10 @@ exports.saveDrug = async function(drug){
 	const entity = new DrugModelCreate(drug);
 	entity.timestamp = category.timestamp;
 	await collection.insert(entity);
+
+	const collection2 = this.mongo.collection('drug_groups');
+	await collection2.update({_id: new ObjectId(drug.group.id)}, {$push: {drugs: entity._id}});
+
 	return entity;
 };
 
