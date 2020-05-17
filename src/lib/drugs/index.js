@@ -66,13 +66,17 @@ exports.getDrugs = async ({name, id, groupId, pharmacyId, filter}, paginator) =>
 
 exports.saveDrug = async function(entity){
 	const drugsDal = await dal.open('drugs');
+	const groupsDal = await dal.open('groups');
 	try{
-		return drugsDal.saveDrug(entity);
+		const drugResult = await drugsDal.saveDrug(entity);
+		await groupsDal.updateCategory(entity.group.id, {$push: {drugs: entity._id}});
+		return drugResult;
 	}catch(err){
 		log.error({}, 'saveDrug error', err);
 		throw err;
 	}finally{
 		drugsDal.close();
+		groupsDal.close();
 	}
 };
 
