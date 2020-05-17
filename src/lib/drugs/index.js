@@ -69,7 +69,7 @@ exports.saveDrug = async function(entity){
 	const groupsDal = await dal.open('groups');
 	try{
 		const drugResult = await drugsDal.saveDrug(entity);
-		await groupsDal.updateCategory(entity.group.id, {$push: {drugs: entity._id}});
+		await groupsDal.updateCategory(entity.group.id, {$push: {drugs: drugResult._id}});
 		return drugResult;
 	}catch(err){
 		log.error({}, 'saveDrug error', err);
