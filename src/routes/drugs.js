@@ -20,8 +20,7 @@ router.get('/', async (req, res, next) => {
 
 router.post('/', async (req, res, next) => {
 	try{
-		await drugs.saveDrug(req.body);
-		res.result = 'OK';
+		res.result = await drugs.saveDrug(req.body);
 		next();
 	}catch(err){
 		next(err);

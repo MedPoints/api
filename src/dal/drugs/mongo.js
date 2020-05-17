@@ -18,6 +18,7 @@ exports.getDrugById = async function(id){
 exports.saveDrug = async function(drug){
 	const collection = this.mongo.collection(collectionName);
 	const entity = new DrugModelCreate(drug);
+	entity.timestamp = category.timestamp;
 	await collection.insert(entity);
 	return entity;
 };
