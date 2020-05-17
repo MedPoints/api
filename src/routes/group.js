@@ -39,7 +39,7 @@ router.put('/', async (req, res, next) => {
 });
 
 router.delete('/', async (req, res, next) => {
-	const {id} = req.query;
+	const {id} = req.body;
 	try{
 		await group.deleteGroup(id);
 		res.result = 'OK';
