@@ -101,7 +101,9 @@ exports.updateDrug = async function(entity){
 			await groupsDal.updateCategory(drug.group.id, {$pull: {drugs: entity.id}});
 			await groupsDal.updateCategory(entity.group.id, {$push: {drugs: entity.id}});
 		}
-		await drugsDal.updateDrug(entity.id, {$set: entity});
+		const id = entity.id;
+		delete entity.id;
+		await drugsDal.updateDrug(id, {$set: entity});
 	}catch(err){
 		log.error({}, 'updateDrug error', err);
 		throw err;

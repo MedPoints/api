@@ -37,9 +37,8 @@ router.get('/count', async (req, res, next) => {
 });
 
 router.put('/', async (req, res, next) => {
-	const doctor = req.body;
 	try{
-		await drugs.updateDrug(doctor);
+		await drugs.updateDrug(req.body);
 		res.result = 'OK';
 		next();
 	}catch(err){
@@ -50,7 +49,7 @@ router.put('/', async (req, res, next) => {
 router.delete('/', async (req, res, next) => {
 	const {id} = req.body;
 	try{
-		await group.deleteDrug(id);
+		await drugs.deleteDrug(id);
 		res.result = 'OK';
 		next();
 	}catch(err){
