@@ -63,7 +63,7 @@ exports.getGroupsWithPages = async function(filter, paginator) {
 	}
 };
 
-exports.deleteDoctor = async function(id){
+exports.deleteGroup = async function(id){
 	const collection = this.mongo.collection(collectionName);
 	await collection.remove({_id: new ObjectId(id)});
 };
