@@ -57,7 +57,7 @@ exports.updateGroup = async function(entity){
 	}
 };
 
-exports.deleteGroup = async (id) => {
+exports.deleteGroup = async function(id){
 	const groupsDal = await dal.open('groups');
 	try{
 		await groupsDal.deleteGroup(id);
