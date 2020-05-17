@@ -22,8 +22,8 @@ exports.getCategoryByName = async function(name){
 exports.saveCategory = async function(category){
 	const collection = this.mongo.collection(collectionName);
 	const entity = new GroupCreate(category);
-	await collection.insert(entity);
-	return entity;
+	const result = await collection.insert(entity);
+	return result;
 };
 
 exports.updateCategory = async function(id, category){
