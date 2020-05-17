@@ -22,6 +22,7 @@ exports.getCategoryByName = async function(name){
 exports.saveCategory = async function(category){
 	const collection = this.mongo.collection(collectionName);
 	const entity = new GroupCreate(category);
+	entity.timestamp = category.timestamp;
 	await collection.insert(entity);
 	return entity;
 };
@@ -60,4 +61,9 @@ exports.getGroupsWithPages = async function(filter, paginator) {
 			total,
 		}
 	}
+};
+
+exports.deleteDoctor = async function(id){
+	const collection = this.mongo.collection(collectionName);
+	await collection.remove({_id: new ObjectId(id)});
 };
