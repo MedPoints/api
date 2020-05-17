@@ -15,6 +15,12 @@ exports.getDrugById = async function(id){
 	return exports.getDrugByFilter({_id: ObjectId(id)});
 };
 
+exports.getDrugsByInterval = async function(filter){
+	const collection = this.mongo.collection(collectionName);
+	const result = await collection.find(filter).toArray();
+	return result.map(el => el._id.toString());
+};
+
 exports.saveDrug = async function(drug){
 	const collection = this.mongo.collection(collectionName);
 	const entity = new DrugModelCreate(drug);

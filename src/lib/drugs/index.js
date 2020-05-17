@@ -64,6 +64,18 @@ exports.getDrugs = async ({name, id, groupId, pharmacyId, filter}, paginator) =>
 	}
 };
 
+exports.getDrugsByInterval = async function(interval){
+	const drugsDal = await dal.open('drugs');
+	try{
+		return await drugsDal.getDrugsByInterval({"timestamp": {$lte: Date.now() - 60000*interval}});
+	}catch(err){
+		log.error({}, 'updateDrug error', err);
+		throw err;
+	}finally{
+		drugsDal.close();
+	}
+};
+
 exports.saveDrug = async function(entity){
 	const drugsDal = await dal.open('drugs');
 	const groupsDal = await dal.open('groups');

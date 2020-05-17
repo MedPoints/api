@@ -17,6 +17,16 @@ router.get('/', async (req, res, next) => {
 	}
 });
 
+router.get('/timer', async (req, res, next) => {
+	const {interval} = req.query;
+	try{
+		res.result = await drugs.getDrugsByInterval(interval);
+		next();
+	}catch(err){
+		next(err);
+	}
+});
+
 
 router.post('/', async (req, res, next) => {
 	try{
