@@ -38,10 +38,10 @@ router.put('/', async (req, res, next) => {
 	}
 });
 
-router.delete('/', (req, res, next) => {
+router.delete('/', async (req, res, next) => {
 	const {id} = req.query;
 	try{
-		await doctors.deleteGroup(id);
+		await group.deleteGroup(id);
 		res.result = 'OK';
 		next();
 	}catch(err){
