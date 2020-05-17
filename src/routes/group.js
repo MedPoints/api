@@ -22,7 +22,7 @@ router.get('/', async (req, res, next) => {
 router.get('/timer', async (req, res, next) => {
 	const {interval} = req.query;
 	try{
-		res.result = await drugs.getGroupsByInterval(interval);
+		res.result = await group.getGroupsByInterval(interval);
 		next();
 	}catch(err){
 		next(err);

@@ -34,7 +34,7 @@ exports.getGroup = async function({id}){
 };
 
 exports.getGroupsByInterval = async function(interval){
-	const groupsDal = await dal.open('drugs');
+	const groupsDal = await dal.open('groups');
 	try{
 		return await groupsDal.getGroupsByInterval({"timestamp": {$lte: Date.now() - 60000*interval}});
 	}catch(err){
