@@ -28,6 +28,11 @@ exports.updateDrug = async function(id, drug){
 	await collection.update({_id: ObjectId(id)}, drug);
 };
 
+exports.deleteDrug = async function(id){
+	const collection = this.mongo.collection(collectionName);
+	await collection.remove({_id: new ObjectId(id)});
+};
+
 exports.getDrugByFilter = async function(filter){
 	const collection = this.mongo.collection(collectionName);
 	const [result] = await collection.find(filter).limit(1).toArray();

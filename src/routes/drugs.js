@@ -47,6 +47,17 @@ router.put('/', async (req, res, next) => {
 	}
 });
 
+router.delete('/', async (req, res, next) => {
+	const {id} = req.body;
+	try{
+		await group.deleteDrug(id);
+		res.result = 'OK';
+		next();
+	}catch(err){
+		next(err);
+	}
+});
+
 
 exports.name = 'drugs';
 exports.module = router;

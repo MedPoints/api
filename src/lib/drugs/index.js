@@ -69,7 +69,7 @@ exports.saveDrug = async function(entity){
 	const groupsDal = await dal.open('groups');
 	try{
 		const drugResult = await drugsDal.saveDrug(entity);
-		await groupsDal.updateCategory(entity.group.id, {$push: {drugs: drugResult._id}});
+		await groupsDal.updateCategory(entity.group.id, {$push: {drugs: drugResult._id.toString()}});
 		return drugResult;
 	}catch(err){
 		log.error({}, 'saveDrug error', err);
@@ -94,12 +94,35 @@ exports.getCount = async function(filter = {}) {
 
 exports.updateDrug = async function(entity){
 	const drugsDal = await dal.open('drugs');
+	const groupsDal = await dal.open('groups');
 	try{
-		return drugsDal.updateDrug(entity.id, entity);
+		const drug = await drugsDal.getDrugById(entity.id);
+		if (drug.group.id !== entity.group.id) {
+			await groupsDal.updateCategory(drug.group.id, {$pull: {drugs: entity.id}});
+			await groupsDal.updateCategory(entity.group.id, {$push: {drugs: entity.id}});
+		}
+		await drugsDal.updateDrug(entity.id, entity);
 	}catch(err){
 		log.error({}, 'updateDrug error', err);
 		throw err;
 	}finally{
 		drugsDal.close();
+		groupsDal.close();
+	}
+};
+
+exports.deleteDrug = async function(id){
+	const drugsDal = await dal.open('drugs');
+	const groupsDal = await dal.open('groups');
+	try{
+		const drug = await drugsDal.getDrugById(id);
+		await groupsDal.updateCategory(drug.group.id, {$pull: {drugs: id}});
+		await drugsDal.deleteDrug(id);
+	}catch(err){
+		log.error('drugsDal error', err);
+		throw err;
+	}finally{
+		drugsDal.close();
+		groupsDal.close();
 	}
 };
