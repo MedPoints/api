@@ -26,9 +26,9 @@ exports.saveCategory = async function(category){
 	return entity;
 };
 
-exports.updateCategory = async function({id, category}){
+exports.updateCategory = async function(id, category){
 	const collection = this.mongo.collection(collectionName);
-	await collection.update({_id: new ObjectId(id)}, category);
+	await collection.update({_id: new ObjectId(id)}, {$set: category});
 };
 
 exports.getCategoryByFilter = async function(filter){
