@@ -28,7 +28,7 @@
     "handlebars": "4.0.12",
     "joi": "13.6.0",
     "mongodb": "3.0.7",
-    "nodemailer": "4.6.8",
+    "nodemailer": "6.4.16",
     "uuid": "3.3.2"
   },
   "devDependencies": {
